@@ -17,10 +17,14 @@ router.post(
   selfieUpload.single('avatar'),
   asyncHandler(async (req, res) => {
     const userId = req.user!.userId;
-    const avatarUrl = req.file ? `/uploads/selfies/${req.file.filename}` : undefined;
-    if (!avatarUrl) {
+    if (!req.file) {
       return res.status(400).json({ status: 'error', message: 'File foto profil wajib diunggah' });
     }
+
+    const mime = req.file.mimetype || 'image/jpeg';
+    const avatarUrl = req.file.buffer
+      ? `data:${mime};base64,${req.file.buffer.toString('base64')}`
+      : `/uploads/selfies/${req.file.filename}`;
     const updated = await prisma.user.update({
       where: { id: userId },
       data: { avatarUrl }

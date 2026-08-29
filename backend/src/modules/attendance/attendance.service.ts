@@ -76,7 +76,10 @@ export class AttendanceService {
       lateCheckinMinutes = Math.floor((now.getTime() - shiftStart.getTime()) / (1000 * 60));
     }
 
-    const selfieUrl = `/uploads/selfies/${file.filename}`;
+    const mime = file.mimetype || 'image/jpeg';
+    const selfieUrl = file.buffer
+      ? `data:${mime};base64,${file.buffer.toString('base64')}`
+      : `/uploads/selfies/${file.filename}`;
 
     const attendance = await AttendanceRepository.createAttendance({
       userId,
