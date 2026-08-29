@@ -49,13 +49,21 @@ async function main() {
       position: 'Guru Ahli Muda (Kepala Sekolah)',
       rankClass: 'III/d'
     },
-    // 2. OPERATOR LAYANAN OPERASIONAL
+    // 2. OPERATOR LAYANAN OPERASIONAL & ADMIN SYSTEM
     {
       nip: '199109262025212082',
       fullName: 'RINA ASRIANI',
       role: Role.ADMIN,
       email: 'operator@sdinprespajjaiang2.sch.id',
       position: 'Operator Layanan Operasional',
+      rankClass: '-'
+    },
+    {
+      nip: 'ADMIN',
+      fullName: 'Admin System',
+      role: Role.ADMIN,
+      email: 'admin@sdinprespajjaiang2.sch.id',
+      position: 'Administrator System',
       rankClass: '-'
     },
     // 3 - 32. GURU PENGAJAR

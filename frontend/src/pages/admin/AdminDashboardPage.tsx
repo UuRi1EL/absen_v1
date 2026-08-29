@@ -802,7 +802,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                       ) : filteredTeachers.length > 0 ? (
                         filteredTeachers.map((t) => (
                           <tr key={t.id} className="hover:bg-slate-50/50 transition">
-                            <td className="p-3.5 font-mono font-bold text-slate-900">{t.role === 'ADMIN' ? '-' : t.nip}</td>
+                            <td className="p-3.5 font-mono font-bold text-slate-900">{t.nip}</td>
                             <td className="p-3.5 font-bold text-slate-900">{t.fullName}</td>
                             <td className="p-3.5 text-slate-600">
                               {t.role === 'ADMIN' ? (
