@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { api } from '../../utils/axios.instance';
 import Sidebar from '../../components/Sidebar';
 import NotificationDropdown from '../../components/NotificationDropdown';
+import { getSelfieUrl } from '../../utils/url.util';
 import {
   Clock,
   Calendar as CalendarIcon,
@@ -464,7 +465,7 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
             <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
               {user?.avatarUrl ? (
                 <img
-                  src={user.avatarUrl}
+                  src={getSelfieUrl(user.avatarUrl)}
                   alt={displayName}
                   className="w-9 h-9 rounded-full object-cover border border-brand-500 shadow-md"
                 />

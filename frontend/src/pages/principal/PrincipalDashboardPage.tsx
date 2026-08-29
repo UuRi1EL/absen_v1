@@ -156,7 +156,7 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
             <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
               {user?.avatarUrl ? (
                 <img
-                  src={user.avatarUrl}
+                  src={getSelfieUrl(user.avatarUrl)}
                   alt={user.fullName}
                   className="w-9 h-9 rounded-full object-cover border border-emerald-500 shadow-md"
                 />

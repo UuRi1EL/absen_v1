@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../utils/axios.instance';
+import { getSelfieUrl } from '../../utils/url.util';
 
 interface SettingsPageProps {
   activeTab?: string;
@@ -244,7 +245,7 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
             <div className="flex flex-col sm:flex-row items-center gap-6 pb-2">
               <div className="relative">
                 <img
-                  src={avatarPreview || user?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'}
+                  src={avatarPreview ? getSelfieUrl(avatarPreview) : user?.avatarUrl ? getSelfieUrl(user.avatarUrl) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'}
                   alt="Avatar User"
                   className="w-24 h-24 rounded-full object-cover border-4 border-slate-100 shadow-md"
                 />

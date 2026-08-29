@@ -385,7 +385,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
             <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
               {user?.avatarUrl ? (
                 <img
-                  src={user.avatarUrl}
+                  src={getSelfieUrl(user.avatarUrl)}
                   alt={user?.fullName || 'Admin'}
                   className="w-9 h-9 rounded-full object-cover border border-amber-500 shadow-md"
                 />
@@ -1055,8 +1055,16 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
             {/* Profile Overview Card */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 text-xs">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-brand-500 text-white font-bold text-lg flex items-center justify-center shadow-md">
-                  {selectedUser.fullName.charAt(0)}
+                <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 shadow-md border-2 border-brand-500 bg-brand-500 text-white font-bold text-lg flex items-center justify-center">
+                  {selectedUser.avatarUrl ? (
+                    <img
+                      src={getSelfieUrl(selectedUser.avatarUrl)}
+                      alt={selectedUser.fullName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span>{selectedUser.fullName ? selectedUser.fullName.charAt(0).toUpperCase() : 'U'}</span>
+                  )}
                 </div>
                 <div>
                   <h4 className="font-extrabold text-slate-900 text-sm">{selectedUser.fullName}</h4>
