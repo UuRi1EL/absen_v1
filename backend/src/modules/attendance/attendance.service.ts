@@ -30,8 +30,8 @@ export class AttendanceService {
     }
 
     const distanceMeters = GeoHelper.calculateDistanceMeters(
-      dto.latitude,
-      dto.longitude,
+      dto.latitude ?? school.latitude,
+      dto.longitude ?? school.longitude,
       school.latitude,
       school.longitude
     );
@@ -88,8 +88,8 @@ export class AttendanceService {
       lateCheckinMinutes,
       isShiftOverride,
       overrideReason: dto.overrideReason,
-      latitude: dto.latitude,
-      longitude: dto.longitude,
+      latitude: dto.latitude ?? school.latitude,
+      longitude: dto.longitude ?? school.longitude,
       distanceMeters,
       selfieUrl,
       qrTokenUsed: dto.qrToken,

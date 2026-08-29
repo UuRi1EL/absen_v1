@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const checkInSchema = z.object({
-  latitude: z.union([z.number(), z.string().transform(Number)]),
-  longitude: z.union([z.number(), z.string().transform(Number)]),
+  latitude: z.union([z.number(), z.string().transform(Number)]).optional(),
+  longitude: z.union([z.number(), z.string().transform(Number)]).optional(),
   qrToken: z.string().optional(),
   selectedShift: z.enum(['SHIFT_1', 'SHIFT_2']).default('SHIFT_1'),
   overrideReason: z.string().optional(),
@@ -17,8 +17,8 @@ export const checkOutSchema = z.object({
 });
 
 export type CheckInDto = {
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
   qrToken?: string;
   selectedShift?: 'SHIFT_1' | 'SHIFT_2';
   overrideReason?: string;
