@@ -35,5 +35,6 @@ router.patch('/profile', asyncHandler(UserController.updateMyProfile));
 router.patch('/:id/reset-password', roleMiddleware(Role.ADMIN, Role.PRINCIPAL), asyncHandler(UserController.resetPassword));
 router.patch('/:id/toggle-active', roleMiddleware(Role.ADMIN, Role.PRINCIPAL), asyncHandler(UserController.toggleActive));
 router.patch('/:id', roleMiddleware(Role.ADMIN, Role.PRINCIPAL), asyncHandler(UserController.updateUserById));
+router.delete('/:id', roleMiddleware(Role.ADMIN), asyncHandler(UserController.deleteUserById));
 
 export default router;

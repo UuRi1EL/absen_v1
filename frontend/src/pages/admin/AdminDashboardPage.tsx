@@ -32,7 +32,8 @@ import {
   PieChart,
   Activity,
   FileText,
-  Paperclip
+  Paperclip,
+  Trash2
 } from 'lucide-react';
 
 interface DashboardPageProps {
@@ -84,9 +85,11 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
   const [isEditMode, setIsEditMode] = useState(false);
 
   // Edit User Form State inside Eye Modal
+  const [editNip, setEditNip] = useState('');
   const [editFullName, setEditFullName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editPhone, setEditPhone] = useState('');
+  const [editRole, setEditRole] = useState('TEACHER');
   const [editPosition, setEditPosition] = useState('');
   const [editEmploymentStatus, setEditEmploymentStatus] = useState('Status Aktif (PPPK)');
   const [editUkgId, setEditUkgId] = useState('');
@@ -133,6 +136,17 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
     id: null,
     fullName: '',
     targetStatus: false
+  });
+
+  // Delete User Confirmation Modal State
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState<{
+    show: boolean;
+    id: string | null;
+    fullName: string;
+  }>({
+    show: false,
+    id: null,
+    fullName: ''
   });
 
   const fetchAdminData = async () => {
@@ -194,15 +208,17 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
 
   const handleOpenEyeModal = (t: any) => {
     setSelectedUser(t);
-    setEditFullName(t.fullName);
-    setEditEmail(t.email);
+    setEditNip(t.nip || '');
+    setEditFullName(t.fullName || '');
+    setEditEmail(t.email || '');
     setEditPhone(t.phone || '');
-    setEditPosition(t.teacherProfile?.position || 'Guru Kelas');
+    setEditRole(t.role || 'TEACHER');
+    setEditPosition(t.teacherProfile?.position || (t.role === 'ADMIN' ? 'Operator Layanan Operasional' : t.role === 'PRINCIPAL' ? 'Kepala Sekolah' : 'Guru Kelas'));
     setEditEmploymentStatus(t.teacherProfile?.employmentStatus || 'Status Aktif (PPPK)');
-    setEditUkgId(t.teacherProfile?.ukgId || '202300256861');
-    setEditNuptk(t.teacherProfile?.nuptk || t.nip || '4551777678130053');
-    setEditPtkDapodikId(t.teacherProfile?.ptkDapodikId || '2B3B9FD5-5227-44BF');
-    setEditBelajarId(t.teacherProfile?.belajarId || 'andi.hasta@guru.sd.belajar.id');
+    setEditUkgId(t.teacherProfile?.ukgId || '');
+    setEditNuptk(t.teacherProfile?.nuptk || '');
+    setEditPtkDapodikId(t.teacherProfile?.ptkDapodikId || '');
+    setEditBelajarId(t.teacherProfile?.belajarId || '');
     setIsEditMode(false);
     setShowEyeModal(true);
   };
@@ -244,24 +260,39 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
 
     try {
       await api.patch(`/users/${selectedUser.id}`, {
-        fullName: editFullName,
-        email: editEmail,
-        phone: editPhone,
-        position: editPosition,
+        nip: editNip.trim(),
+        fullName: editFullName.trim(),
+        email: editEmail.trim(),
+        phone: editPhone.trim(),
+        role: editRole,
+        position: editPosition.trim(),
         employmentStatus: editEmploymentStatus,
-        ukgId: editUkgId,
-        nuptk: editNuptk,
-        ptkDapodikId: editPtkDapodikId,
-        belajarId: editBelajarId
+        ukgId: editUkgId.trim(),
+        nuptk: editNuptk.trim(),
+        ptkDapodikId: editPtkDapodikId.trim(),
+        belajarId: editBelajarId.trim()
       });
 
-      alert(`✓ Informasi Dapodik & Profil guru ${editFullName} berhasil diperbarui!`);
+      alert(`✓ Informasi akun & profil ${editFullName} berhasil diperbarui!`);
       setShowEyeModal(false);
       fetchAdminData();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal memperbarui informasi guru.');
+      alert(err.response?.data?.message || 'Gagal memperbarui informasi pengguna.');
     } finally {
       setIsSubmittingEdit(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!deleteConfirmModal.id) return;
+    try {
+      await api.delete(`/users/${deleteConfirmModal.id}`);
+      alert(`✓ Akun pengguna ${deleteConfirmModal.fullName} berhasil dihapus secara permanen!`);
+      setDeleteConfirmModal({ show: false, id: null, fullName: '' });
+      setShowEyeModal(false);
+      fetchAdminData();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Gagal menghapus akun pengguna.');
     }
   };
 
@@ -833,14 +864,22 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                               )}
                             </td>
                             <td className="p-3.5 text-center">
-                              {/* CLEAN SINGLE EYE ICON BUTTON */}
-                              <button
-                                onClick={() => handleOpenEyeModal(t)}
-                                className="p-2 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-600 hover:text-brand-600 border border-slate-200 transition mx-auto flex items-center justify-center"
-                                title="Lihat Detail & Kelola Akun"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </button>
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button
+                                  onClick={() => handleOpenEyeModal(t)}
+                                  className="p-2 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-600 hover:text-brand-600 border border-slate-200 transition"
+                                  title="Lihat Detail & Edit Akun"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => setDeleteConfirmModal({ show: true, id: t.id, fullName: t.fullName })}
+                                  className="p-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 transition"
+                                  title="Hapus Akun Pengguna"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -1036,6 +1075,32 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
             {/* Inline Edit Form toggle */}
             {isEditMode ? (
               <form onSubmit={handleUpdateTeacher} className="space-y-3 text-xs border-t border-slate-100 pt-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="font-bold text-slate-700">NIP / ID Pengguna</label>
+                    <input
+                      type="text"
+                      required
+                      value={editNip}
+                      onChange={(e) => setEditNip(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-mono font-bold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-bold text-slate-700">Peran / Hak Akses</label>
+                    <select
+                      value={editRole}
+                      onChange={(e) => setEditRole(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold"
+                    >
+                      <option value="TEACHER">Guru Pengajar</option>
+                      <option value="PRINCIPAL">Kepala Sekolah</option>
+                      <option value="ADMIN">Admin / Operator</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="space-y-1">
                   <label className="font-bold text-slate-700">Nama Lengkap & Gelar</label>
                   <input
@@ -1043,7 +1108,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                     required
                     value={editFullName}
                     onChange={(e) => setEditFullName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold"
                   />
                 </div>
 
@@ -1071,7 +1136,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700">Jabatan / Tugasan Mengajar</label>
+                  <label className="font-bold text-slate-700">Jabatan / Tugas</label>
                   <input
                     type="text"
                     value={editPosition}
@@ -1156,33 +1221,32 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                 </div>
               </form>
             ) : (
-              <div className="space-y-2 pt-1">
-                {selectedUser.role === 'TEACHER' ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => setIsEditMode(true)}
-                      className="py-2.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-600 border border-brand-200 font-bold text-xs transition flex items-center justify-center gap-1.5"
-                    >
-                      <Edit3 className="w-4 h-4" /> Edit Data Guru
-                    </button>
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                <button
+                  onClick={() => setIsEditMode(true)}
+                  className="py-2.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-600 border border-brand-200 font-bold text-xs transition flex items-center justify-center gap-1"
+                >
+                  <Edit3 className="w-4 h-4" /> Edit Akun
+                </button>
 
-                    <button
-                      onClick={() => openUserConfirm(selectedUser.id, selectedUser.fullName, selectedUser.isActive)}
-                      className={`py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5 border ${
-                        selectedUser.isActive
-                          ? 'bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200'
-                          : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border-emerald-200'
-                      }`}
-                    >
-                      {selectedUser.isActive ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
-                      {selectedUser.isActive ? 'Nonaktifkan Akun' : 'Aktifkan Akun'}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs font-bold text-center flex items-center justify-center gap-1.5">
-                    <Lock className="w-4 h-4 text-amber-600" /> Akun Master (Terkunci Kebijakan Sekolah)
-                  </div>
-                )}
+                <button
+                  onClick={() => openUserConfirm(selectedUser.id, selectedUser.fullName, selectedUser.isActive)}
+                  className={`py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1 border ${
+                    selectedUser.isActive
+                      ? 'bg-amber-50 hover:bg-amber-100 text-amber-600 border-amber-200'
+                      : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border-emerald-200'
+                  }`}
+                >
+                  {selectedUser.isActive ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
+                  {selectedUser.isActive ? 'Nonaktifkan' : 'Aktifkan'}
+                </button>
+
+                <button
+                  onClick={() => setDeleteConfirmModal({ show: true, id: selectedUser.id, fullName: selectedUser.fullName })}
+                  className="py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs transition flex items-center justify-center gap-1"
+                >
+                  <Trash2 className="w-4 h-4" /> Hapus
+                </button>
               </div>
             )}
 
@@ -1252,6 +1316,41 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                 }`}
               >
                 Ya, Konfirmasi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE USER CONFIRMATION MODAL */}
+      {deleteConfirmModal.show && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-center relative">
+            <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
+              <Trash2 className="w-6 h-6" />
+            </div>
+
+            <div className="space-y-1">
+              <h3 className="text-base font-extrabold text-slate-900">
+                Konfirmasi Hapus Akun
+              </h3>
+              <p className="text-xs text-slate-500">
+                Apakah Anda yakin ingin <strong className="text-rose-600">MENGHAPUS PERMANEN</strong> akun pengguna <strong>{deleteConfirmModal.fullName}</strong>? Seluruh data presensi dan profil terkait akan dihapus secara permanen.
+              </p>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => setDeleteConfirmModal({ show: false, id: null, fullName: '' })}
+                className="flex-1 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 transition"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleDeleteUser}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition shadow-md shadow-rose-600/20"
+              >
+                Ya, Hapus Akun
               </button>
             </div>
           </div>

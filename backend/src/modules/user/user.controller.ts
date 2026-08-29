@@ -45,6 +45,12 @@ export class UserController {
   static async updateUserById(req: Request, res: Response) {
     const { id } = req.params;
     const updated = await UserService.updateUserProfile(id, req.body);
-    return ApiResponse.success(res, 'Informasi profil guru berhasil diperbarui', updated);
+    return ApiResponse.success(res, 'Informasi profil pengguna berhasil diperbarui', updated);
+  }
+
+  static async deleteUserById(req: Request, res: Response) {
+    const { id } = req.params;
+    const deleted = await UserService.deleteUserById(id);
+    return ApiResponse.success(res, 'Akun pengguna berhasil dihapus secara permanen', deleted);
   }
 }

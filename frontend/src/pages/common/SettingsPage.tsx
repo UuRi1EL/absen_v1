@@ -83,6 +83,18 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
     }
   };
 
+  const [userNip, setUserNip] = useState(user?.nip || '');
+  const [userFullName, setUserFullName] = useState(user?.fullName || '');
+  const [userEmail, setUserEmail] = useState(user?.email || '');
+
+  useEffect(() => {
+    if (user) {
+      setUserNip(user.nip || '');
+      setUserFullName(user.fullName || '');
+      setUserEmail(user.email || '');
+    }
+  }, [user]);
+
   const handleOpenConfirm = (e: React.FormEvent) => {
     e.preventDefault();
     setShowSaveConfirm(true);
@@ -107,6 +119,15 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
         newAvatarUrl = avatarRes.data.data.avatarUrl;
       }
 
+      // Update user NIP, Name, Email
+      const profileRes = await api.patch('/users/profile', {
+        nip: userNip.trim(),
+        fullName: userFullName.trim(),
+        email: userEmail.trim()
+      });
+
+      const updatedUserFromBackend = profileRes.data.data;
+
       if (isAdminRole) {
         await api.patch('/school', {
           latitude: parseFloat(latitude),
@@ -120,15 +141,18 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
       if (user) {
         login(localStorage.getItem('accessToken') || '', {
           ...user,
+          nip: updatedUserFromBackend?.nip || userNip.trim(),
+          fullName: updatedUserFromBackend?.fullName || userFullName.trim(),
+          email: updatedUserFromBackend?.email || userEmail.trim(),
           avatarUrl: newAvatarUrl
         });
       }
 
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 4000);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Gagal menyimpan profil:', err);
-      alert('Gagal menyimpan profil. Silakan coba lagi.');
+      alert(err.response?.data?.message || 'Gagal menyimpan profil. Periksa NIP Anda.');
     } finally {
       setIsUploadingAvatar(false);
     }
@@ -257,12 +281,16 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
             <form onSubmit={handleOpenConfirm} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-700">NIP / Nomor Induk Pegawai</label>
+                  <label className="font-bold text-slate-700 flex items-center justify-between">
+                    <span>NIP / Nomor Induk Pegawai</span>
+                    <span className="text-[10px] text-brand-600 font-bold">✏️ Dapat Diedit</span>
+                  </label>
                   <input
                     type="text"
-                    disabled
-                    value={user?.nip || ''}
-                    className="w-full bg-slate-100 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-500 font-mono"
+                    required
+                    value={userNip}
+                    onChange={(e) => setUserNip(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-mono font-bold focus:bg-white focus:border-brand-500 transition"
                   />
                 </div>
 
@@ -270,8 +298,10 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
                   <label className="font-bold text-slate-700">Nama Lengkap & Gelar</label>
                   <input
                     type="text"
-                    defaultValue={user?.fullName || ''}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold"
+                    required
+                    value={userFullName}
+                    onChange={(e) => setUserFullName(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold focus:bg-white focus:border-brand-500 transition"
                   />
                 </div>
               </div>
@@ -280,8 +310,10 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
                 <label className="font-bold text-slate-700">Email Resmi Sekolah</label>
                 <input
                   type="email"
-                  defaultValue={user?.email || ''}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
+                  required
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-brand-500 transition"
                 />
               </div>
 

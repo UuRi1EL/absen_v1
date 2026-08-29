@@ -13,6 +13,7 @@ export const createUserSchema = z.object({
 });
 
 export const updateUserSchema = z.object({
+  nip: z.string().min(3, 'NIP minimal 3 karakter').optional(),
   fullName: z.string().min(3).optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),

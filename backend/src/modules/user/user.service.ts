@@ -70,10 +70,13 @@ export class UserService {
   }
 
   static async updateUserProfile(userId: string, data: {
+    nip?: string;
     fullName?: string;
     email?: string;
     phone?: string;
+    role?: string;
     position?: string;
+    department?: string;
     nuptk?: string;
     ukgId?: string;
     ptkDapodikId?: string;
@@ -81,17 +84,38 @@ export class UserService {
     belajarId?: string;
   }) {
     const userUpdate: any = {};
-    if (data.fullName) userUpdate.fullName = data.fullName;
-    if (data.email) userUpdate.email = data.email;
-    if (data.phone !== undefined) userUpdate.phone = data.phone;
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: userUpdate
-    });
+    if (data.nip) {
+      const trimmedNip = data.nip.trim();
+      const existing = await prisma.user.findFirst({
+        where: {
+          nip: trimmedNip,
+          NOT: { id: userId }
+        }
+      });
+      if (existing) {
+        throw new ConflictError(`NIP ${trimmedNip} sudah digunakan oleh akun lain`);
+      }
+      userUpdate.nip = trimmedNip;
+    }
+
+    if (data.fullName) userUpdate.fullName = data.fullName.trim();
+    if (data.email) userUpdate.email = data.email.trim();
+    if (data.phone !== undefined) userUpdate.phone = data.phone;
+    if (data.role && ['ADMIN', 'TEACHER', 'PRINCIPAL'].includes(data.role)) {
+      userUpdate.role = data.role as any;
+    }
+
+    if (Object.keys(userUpdate).length > 0) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: userUpdate
+      });
+    }
 
     const profileData: any = {};
     if (data.position !== undefined) profileData.position = data.position;
+    if (data.department !== undefined) profileData.department = data.department;
     if (data.nuptk !== undefined) profileData.nuptk = data.nuptk;
     if (data.ukgId !== undefined) profileData.ukgId = data.ukgId;
     if (data.ptkDapodikId !== undefined) profileData.ptkDapodikId = data.ptkDapodikId;
@@ -118,6 +142,32 @@ export class UserService {
     return prisma.user.findUnique({
       where: { id: userId },
       include: { teacherProfile: true }
+    });
+  }
+
+  static async deleteUserById(userId: string) {
+    const existing = await prisma.user.findUnique({ where: { id: userId } });
+    if (!existing) {
+      throw new NotFoundError('Pengguna tidak ditemukan');
+    }
+
+    // Purge foreign key child records
+    await prisma.auditLog.deleteMany({ where: { userId } });
+    await prisma.attendance.deleteMany({ where: { userId } });
+    await prisma.leaveRequest.deleteMany({
+      where: {
+        OR: [
+          { teacherId: userId },
+          { approvedById: userId }
+        ]
+      }
+    });
+    await prisma.teacherProfile.deleteMany({ where: { userId } });
+    await prisma.teacherShiftSchedule.deleteMany({ where: { userId } });
+    await prisma.refreshToken.deleteMany({ where: { userId } });
+
+    return prisma.user.delete({
+      where: { id: userId }
     });
   }
 }
