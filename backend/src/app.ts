@@ -1,3 +1,4 @@
+process.env.TZ = 'Asia/Makassar';
 import express, { Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
