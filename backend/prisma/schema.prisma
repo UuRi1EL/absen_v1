@@ -1,0 +1,200 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  PRINCIPAL
+}
+
+enum WorkShift {
+  SHIFT_1
+  SHIFT_2
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+  LEAVE
+  SICK
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String         @id @default(uuid())
+  nip           String         @unique
+  email         String         @unique
+  password      String
+  fullName      String
+  role          Role           @default(TEACHER)
+  phone         String?
+  avatarUrl     String?
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  teacherProfile TeacherProfile?
+  attendances    Attendance[]
+  leaveRequests  LeaveRequest[] @relation("TeacherLeaveRequests")
+  approvedLeaves LeaveRequest[] @relation("ApprovedByRelation")
+  refreshTokens  RefreshToken[]
+  auditLogs      AuditLog[]
+  shiftSchedules TeacherShiftSchedule[]
+
+  @@map("users")
+}
+
+model TeacherProfile {
+  id               String       @id @default(uuid())
+  userId           String       @unique
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolId         String
+  school           School       @relation(fields: [schoolId], references: [id])
+  department       String?
+  position         String?
+  nuptk            String?
+  ukgId            String?
+  ptkDapodikId     String?
+  employmentStatus String?
+  belajarId        String?
+  defaultShift     WorkShift    @default(SHIFT_1)
+  workShiftStart   String       @default("07:30")
+  workShiftEnd     String       @default("15:00")
+  
+  @@map("teacher_profiles")
+}
+
+model School {
+  id             String           @id @default(uuid())
+  name           String
+  address        String
+  latitude       Float
+  longitude      Float
+  radiusMeters   Float            @default(100.0)
+  operatorPhone  String?          @default("085298499891")
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  teachers       TeacherProfile[]
+  qrCodes        QRCodeToken[]
+
+  @@map("schools")
+}
+
+model Attendance {
+  id                   String           @id @default(uuid())
+  userId               String
+  user                 User             @relation(fields: [userId], references: [id])
+  date                 DateTime         @db.Date
+  checkInTime          DateTime?
+  checkOutTime         DateTime?
+  status               AttendanceStatus @default(PRESENT)
+  
+  selectedShift        WorkShift        @default(SHIFT_1)
+  scheduledShift       WorkShift        @default(SHIFT_1)
+  workDurationMinutes Int              @default(0)
+  lateCheckinMinutes   Int              @default(0)
+  earlyCheckoutMinutes Int              @default(0)
+  isShiftOverride      Boolean          @default(false)
+  overrideReason       String?
+  earlyCheckoutReason  String?
+
+  latitude             Float
+  longitude            Float
+  distanceMeters       Float
+  selfieUrl            String
+  deviceInfo           String?
+  qrTokenUsed          String?
+  
+  notes                String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@index([status])
+  @@map("attendances")
+}
+
+model LeaveRequest {
+  id           String      @id @default(uuid())
+  teacherId    String
+  teacher      User        @relation("TeacherLeaveRequests", fields: [teacherId], references: [id])
+  startDate    DateTime    @db.Date
+  endDate      DateTime    @db.Date
+  reason       String
+  attachment   String?
+  status       LeaveStatus @default(PENDING)
+  approvedById String?
+  approvedBy   User?       @relation("ApprovedByRelation", fields: [approvedById], references: [id])
+  approvedAt   DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("leave_requests")
+}
+
+model QRCodeToken {
+  id        String   @id @default(uuid())
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@map("qr_code_tokens")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  isRevoked Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  details   Json
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model TeacherShiftSchedule {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  year      Int       @default(2026)
+  month     Int       @default(8)
+  week      Int       @default(1) // 1, 2, 3, 4, 5
+  dayOfWeek Int       // 1 = Senin, 2 = Selasa, 3 = Rabu, 4 = Kamis, 5 = Jumat, 6 = Sabtu
+  shift     WorkShift @default(SHIFT_1)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId, year, month, week, dayOfWeek])
+  @@map("teacher_shift_schedules")
+}
