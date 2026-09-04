@@ -85,6 +85,9 @@ export default function ReportsPage({ activeTab = 'reports', setActiveTab, onBac
           }
           main {
             padding-left: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
           }
           body {
             background: white !important;
@@ -94,6 +97,16 @@ export default function ReportsPage({ activeTab = 'reports', setActiveTab, onBac
             border: none !important;
             box-shadow: none !important;
             padding: 0 !important;
+          }
+          table.report-table, .report-table th, .report-table td {
+            border: 1px solid black !important;
+            border-collapse: collapse !important;
+          }
+          .report-table th {
+            background-color: #f1f5f9 !important;
+            color: black !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
         }
       `}</style>
@@ -278,23 +291,23 @@ export default function ReportsPage({ activeTab = 'reports', setActiveTab, onBac
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border border-slate-200">
+              <table className="w-full text-left text-xs border-collapse border-2 border-slate-700 print:border-black report-table">
                 <thead>
-                  <tr className="bg-slate-100 text-slate-900 font-extrabold uppercase border-b border-slate-200">
-                    <th className="p-3 border-r border-slate-200 text-center w-10">NO</th>
-                    <th className="p-3 border-r border-slate-200">NIP / NAMA GURU</th>
-                    <th className="p-3 border-r border-slate-200 text-center">SHIFT (1/2)</th>
-                    <th className="p-3 border-r border-slate-200 text-center">TEPAT / LATE</th>
-                    <th className="p-3 border-r border-slate-200 text-center">IZIN / SAKIT</th>
-                    <th className="p-3 border-r border-slate-200 text-center">TOTAL HADIR</th>
-                    <th className="p-3 border-r border-slate-200 text-center">TOTAL JAM PRESENSI AKTUAL</th>
-                    <th className="p-3 text-center">STATUS REKAP</th>
+                  <tr className="bg-slate-100 print:bg-slate-100 text-slate-900 font-extrabold uppercase text-center border-b-2 border-slate-700 print:border-black">
+                    <th className="p-2.5 border border-slate-500 print:border-black text-center w-10">NO</th>
+                    <th className="p-2.5 border border-slate-500 print:border-black text-left">NIP / NAMA GURU</th>
+                    <th className="p-2.5 border border-slate-500 print:border-black text-center">SHIFT (1/2)</th>
+                    <th className="p-2.5 border border-slate-500 print:border-black text-center">TEPAT / TERLAMBAT</th>
+                    <th className="p-2.5 border border-slate-500 print:border-black text-center">IZIN / SAKIT</th>
+                    <th className="p-2.5 border border-slate-500 print:border-black text-center">TOTAL HADIR</th>
+                    <th className="p-2.5 border border-slate-500 print:border-black text-center">TOTAL JAM AKTUAL</th>
+                    <th className="p-2.5 border border-slate-500 print:border-black text-center">STATUS REKAP</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-slate-400">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={8} className="p-8 text-center text-slate-500 font-bold">
+                      <td colSpan={8} className="p-8 text-center text-slate-500 font-bold border border-slate-400 print:border-black">
                         <div className="flex items-center justify-center gap-2">
                           <div className="w-4 h-4 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
                           <span>Memuat rekapitulasi data presensi...</span>
@@ -304,28 +317,28 @@ export default function ReportsPage({ activeTab = 'reports', setActiveTab, onBac
                   ) : displaySummary && displaySummary.length > 0 ? (
                     displaySummary.map((item: any, index: number) => (
                       <tr key={item?.id || index} className="hover:bg-slate-50 transition">
-                        <td className="p-3 text-center border-r border-slate-200 font-bold">{index + 1}</td>
-                        <td className="p-3 border-r border-slate-200">
+                        <td className="p-2.5 text-center border border-slate-400 print:border-black font-bold text-slate-900">{index + 1}</td>
+                        <td className="p-2.5 border border-slate-400 print:border-black">
                           <div className="font-bold text-slate-900">{item?.fullName || '-'}</div>
-                          <div className="font-mono text-[10px] text-slate-500">{item?.nip || '-'} • {item?.position || 'Guru'}</div>
+                          <div className="font-mono text-[10px] text-slate-600">{item?.nip || '-'} • {item?.position || 'Guru'}</div>
                         </td>
-                        <td className="p-3 border-r border-slate-200 text-center font-bold">
+                        <td className="p-2.5 border border-slate-400 print:border-black text-center font-bold">
                           <span className="text-brand-600">{item?.shift1Count || 0} S1</span> / <span className="text-amber-600">{item?.shift2Count || 0} S2</span>
                         </td>
-                        <td className="p-3 border-r border-slate-200 text-center font-bold">
+                        <td className="p-2.5 border border-slate-400 print:border-black text-center font-bold">
                           <span className="text-emerald-600">{item?.presentCount || 0} H</span> | <span className="text-amber-600">{item?.lateCount || 0} L</span>
                         </td>
-                        <td className="p-3 border-r border-slate-200 text-center font-bold text-blue-600">
+                        <td className="p-2.5 border border-slate-400 print:border-black text-center font-bold text-blue-600">
                           {item?.leaveCount || 0} Hari
                         </td>
-                        <td className="p-3 border-r border-slate-200 text-center font-black text-slate-800">
+                        <td className="p-2.5 border border-slate-400 print:border-black text-center font-black text-slate-900">
                           {item?.totalHadir || 0} Hari
                         </td>
-                        <td className="p-3 border-r border-slate-200 text-center font-black text-brand-600">
+                        <td className="p-2.5 border border-slate-400 print:border-black text-center font-black text-brand-600">
                           {item?.formattedTotalWork || '0 Jam 0 Menit'}
                         </td>
-                        <td className="p-3 text-center">
-                          <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-black border border-emerald-200">
+                        <td className="p-2.5 border border-slate-400 print:border-black text-center">
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-black border border-emerald-300 print:border-none print:text-black">
                             ✓ TERCATAT RESMI
                           </span>
                         </td>
@@ -333,7 +346,7 @@ export default function ReportsPage({ activeTab = 'reports', setActiveTab, onBac
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={8} className="p-8 text-center text-slate-400 font-bold">
+                      <td colSpan={8} className="p-8 text-center text-slate-400 font-bold border border-slate-400 print:border-black">
                         Belum ada rekapitulasi data presensi pada periode {currentMonthLabel} {selectedYear}.
                       </td>
                     </tr>
