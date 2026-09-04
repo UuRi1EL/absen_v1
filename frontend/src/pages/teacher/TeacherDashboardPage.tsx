@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { api } from '../../utils/axios.instance';
 import Sidebar from '../../components/Sidebar';
 import NotificationDropdown from '../../components/NotificationDropdown';
-import { getSelfieUrl } from '../../utils/url.util';
+import UserProfileDropdown from '../../components/UserProfileDropdown';
 import {
   Clock,
   Calendar as CalendarIcon,
@@ -461,28 +461,7 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
 
           <div className="flex items-center gap-4">
             <NotificationDropdown />
-
-            <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
-              {user?.avatarUrl ? (
-                <img
-                  src={getSelfieUrl(user.avatarUrl)}
-                  alt={displayName}
-                  className="w-9 h-9 rounded-full object-cover border border-brand-500 shadow-md"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center text-sm shadow-md shadow-brand-500/20">
-                  {displayName?.charAt(0) || 'G'}
-                </div>
-              )}
-              <div className="hidden sm:block text-left">
-                <div className="text-xs font-bold text-slate-900 leading-tight">
-                  {displayName}
-                </div>
-                <div className="text-[10px] font-semibold text-slate-500">
-                  NUPTK: 4551777678130053 • PPPK
-                </div>
-              </div>
-            </div>
+            <UserProfileDropdown />
           </div>
         </header>
 

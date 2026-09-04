@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { api } from '../../utils/axios.instance';
 import Sidebar from '../../components/Sidebar';
 import NotificationDropdown from '../../components/NotificationDropdown';
+import UserProfileDropdown from '../../components/UserProfileDropdown';
 import SchoolMapPicker from '../../components/SchoolMapPicker';
 import { getSelfieUrl } from '../../utils/url.util';
 import {
@@ -382,27 +383,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
 
           <div className="flex items-center gap-4">
             <NotificationDropdown />
-            <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
-              {user?.avatarUrl ? (
-                <img
-                  src={getSelfieUrl(user.avatarUrl)}
-                  alt={user?.fullName || 'Admin'}
-                  className="w-9 h-9 rounded-full object-cover border border-amber-500 shadow-md"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 text-white font-black flex items-center justify-center text-sm shadow-md border border-amber-300/40">
-                  {user?.fullName ? user.fullName.charAt(0).toUpperCase() : 'O'}
-                </div>
-              )}
-              <div className="hidden sm:block text-left">
-                <div className="text-xs font-black text-slate-900 leading-tight">
-                  {user?.fullName || 'RINA ASRIANI'}
-                </div>
-                <div className="text-[10px] font-bold text-slate-500">
-                  {user?.teacherProfile?.position || 'Operator Layanan Operasional • Admin'}
-                </div>
-              </div>
-            </div>
+            <UserProfileDropdown customAvatarClass="w-9 h-9 rounded-full object-cover border-2 border-amber-500 shadow-md" />
           </div>
         </header>
 
