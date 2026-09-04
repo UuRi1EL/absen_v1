@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapPin, Navigation, Search, AlertCircle } from 'lucide-react';
+import { toast } from '../store/toastStore';
 
 interface SchoolMapPickerProps {
   latitude: number;
@@ -149,7 +150,7 @@ export default function SchoolMapPicker({
   // Handle GPS Current Device Location
   const handleUseCurrentGPS = () => {
     if (!navigator.geolocation) {
-      alert('Browser Anda tidak mendukung GPS.');
+      toast.warning('Browser Anda tidak mendukung deteksi lokasi GPS.');
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -157,9 +158,10 @@ export default function SchoolMapPicker({
         const lat = Number(pos.coords.latitude.toFixed(7));
         const lng = Number(pos.coords.longitude.toFixed(7));
         onChangeLocation(lat, lng);
+        toast.success(`Lokasi GPS perangkat berhasil dideteksi: ${lat}, ${lng}`);
       },
       () => {
-        alert('Gagal mengambil GPS perangkat. Pastikan izin lokasi diizinkan di browser.');
+        toast.error('Gagal mengambil GPS perangkat. Pastikan izin lokasi diizinkan di browser.');
       },
       { enableHighAccuracy: true, timeout: 5000 }
     );

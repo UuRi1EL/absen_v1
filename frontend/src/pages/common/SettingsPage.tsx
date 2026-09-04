@@ -18,6 +18,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../utils/axios.instance';
 import { getSelfieUrl } from '../../utils/url.util';
+import { toast } from '../../store/toastStore';
 
 interface SettingsPageProps {
   activeTab?: string;
@@ -150,10 +151,11 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
       }
 
       setSavedSuccess(true);
+      toast.success('Informasi profil & akun Anda berhasil diperbarui!');
       setTimeout(() => setSavedSuccess(false), 4000);
     } catch (err: any) {
       console.error('Gagal menyimpan profil:', err);
-      alert(err.response?.data?.message || 'Gagal menyimpan profil. Periksa NIP Anda.');
+      toast.error(err.response?.data?.message || 'Gagal menyimpan profil. Periksa NIP Anda.');
     } finally {
       setIsUploadingAvatar(false);
     }
@@ -180,13 +182,17 @@ export default function SettingsPage({ activeTab = 'settings', setActiveTab }: S
         oldPassword,
         newPassword
       });
-      setPasswordSuccess(res.data.message || 'Password Anda berhasil diperbarui!');
+      const succMsg = res.data.message || 'Password Anda berhasil diperbarui!';
+      setPasswordSuccess(succMsg);
+      toast.success(succMsg);
       setOldPassword('');
       setNewPassword('');
       setConfirmPassword('');
       setTimeout(() => setPasswordSuccess(null), 5000);
     } catch (err: any) {
-      setPasswordError(err.response?.data?.message || 'Gagal mengubah password. Periksa kembali password lama Anda.');
+      const errMsg = err.response?.data?.message || 'Gagal mengubah password. Periksa kembali password lama Anda.';
+      setPasswordError(errMsg);
+      toast.error(errMsg);
     } finally {
       setIsChangingPassword(false);
     }

@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar';
 import NotificationDropdown from '../../components/NotificationDropdown';
 import UserProfileDropdown from '../../components/UserProfileDropdown';
 import SchoolMapPicker from '../../components/SchoolMapPicker';
+import { toast } from '../../store/toastStore';
 import { getSelfieUrl } from '../../utils/url.util';
 import {
   Users,
@@ -107,7 +108,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
   const handleResetUserPassword = async (userId: string) => {
     const trimmedPass = customResetPassword.trim();
     if (trimmedPass.length > 0 && trimmedPass.length < 6) {
-      alert('❌ Password baru harus minimal 6 karakter!');
+      toast.warning('Password baru harus minimal 6 karakter!');
       return;
     }
 
@@ -116,11 +117,12 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
       setResetMsg(null);
       const targetPass = trimmedPass || 'password123';
       await api.patch(`/users/${userId}/reset-password`, { newPassword: targetPass });
+      toast.success(`Password berhasil di-reset menjadi: ${targetPass}`);
       setResetMsg(`Password berhasil di-reset menjadi: ${targetPass}`);
       setCustomResetPassword('');
       setTimeout(() => setResetMsg(null), 6000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal mereset password.');
+      toast.error(err.response?.data?.message || 'Gagal mereset password.');
     } finally {
       setIsResettingPassword(false);
     }
@@ -274,11 +276,11 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
         belajarId: editBelajarId.trim()
       });
 
-      alert(`✓ Informasi akun & profil ${editFullName} berhasil diperbarui!`);
+      toast.success(`Informasi akun & profil ${editFullName} berhasil diperbarui!`);
       setShowEyeModal(false);
       fetchAdminData();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal memperbarui informasi pengguna.');
+      toast.error(err.response?.data?.message || 'Gagal memperbarui informasi pengguna.');
     } finally {
       setIsSubmittingEdit(false);
     }
@@ -288,12 +290,12 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
     if (!deleteConfirmModal.id) return;
     try {
       await api.delete(`/users/${deleteConfirmModal.id}`);
-      alert(`✓ Akun pengguna ${deleteConfirmModal.fullName} berhasil dihapus secara permanen!`);
+      toast.success(`Akun pengguna ${deleteConfirmModal.fullName} berhasil dihapus secara permanen!`);
       setDeleteConfirmModal({ show: false, id: null, fullName: '' });
       setShowEyeModal(false);
       fetchAdminData();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal menghapus akun pengguna.');
+      toast.error(err.response?.data?.message || 'Gagal menghapus akun pengguna.');
     }
   };
 
@@ -309,13 +311,14 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
         radiusMeters: Number(radiusMeters),
         operatorPhone: operatorPhone.trim()
       });
+      toast.success('Parameter Koordinat & Radius GPS Sekolah Berhasil Disimpan!');
       setConfigSuccessMsg('✓ Parameter Koordinat & Radius GPS Sekolah Berhasil Disimpan Ke Database!');
       await fetchAdminData();
       setTimeout(() => {
         setShowConfigModal(false);
       }, 1200);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal menyimpan koordinat sekolah.');
+      toast.error(err.response?.data?.message || 'Gagal menyimpan koordinat sekolah.');
     } finally {
       setIsSavingConfig(false);
     }
@@ -335,10 +338,11 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
     if (!userConfirmModal.id) return;
     try {
       await api.patch(`/users/${userConfirmModal.id}/toggle-active`, { isActive: userConfirmModal.targetStatus });
+      toast.success(`Status akun ${userConfirmModal.fullName} berhasil diubah!`);
       setUserConfirmModal({ show: false, id: null, fullName: '', targetStatus: false });
       fetchAdminData();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal mengubah status akun.');
+      toast.error(err.response?.data?.message || 'Gagal mengubah status akun.');
     }
   };
 

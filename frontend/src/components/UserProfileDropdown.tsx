@@ -11,6 +11,8 @@ import {
   Award
 } from 'lucide-react';
 
+import { toast } from '../store/toastStore';
+
 interface UserProfileDropdownProps {
   customAvatarClass?: string;
   showTextLabels?: boolean;
@@ -23,6 +25,7 @@ export default function UserProfileDropdown({
   onOpenSettings 
 }: UserProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { user, logout } = useAuth();
 
   if (!user) return null;
@@ -43,6 +46,7 @@ export default function UserProfileDropdown({
 
   const handleGoToSettings = () => {
     setIsOpen(false);
+    setShowLogoutConfirm(false);
     if (onOpenSettings) {
       onOpenSettings();
     } else {
@@ -50,11 +54,11 @@ export default function UserProfileDropdown({
     }
   };
 
-  const handleLogout = () => {
+  const handleConfirmLogout = () => {
     setIsOpen(false);
-    if (window.confirm('Apakah Anda yakin ingin keluar dari akun presensi?')) {
-      logout();
-    }
+    setShowLogoutConfirm(false);
+    toast.info('Sesi Anda telah diakhiri. Sampai jumpa!');
+    logout();
   };
 
   return (
@@ -202,24 +206,50 @@ export default function UserProfileDropdown({
             </div>
 
             {/* Quick Actions Footer */}
-            <div className="p-4 bg-slate-800/90 border-t border-slate-700/80 flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={handleGoToSettings}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-md active:scale-95 cursor-pointer"
-              >
-                <Settings className="w-4 h-4" />
-                <span>Pengaturan Akun & Profil</span>
-              </button>
+            <div className="p-4 bg-slate-800/90 border-t border-slate-700/80">
+              {showLogoutConfirm ? (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 animate-fade-in">
+                  <span className="text-xs font-bold text-rose-300">
+                    Yakin ingin keluar dari akun presensi?
+                  </span>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={() => setShowLogoutConfirm(false)}
+                      className="flex-1 sm:flex-none py-2 px-3.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold text-xs transition cursor-pointer"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleConfirmLogout}
+                      className="flex-1 sm:flex-none py-2 px-3.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition cursor-pointer shadow-md"
+                    >
+                      Ya, Keluar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={handleGoToSettings}
+                    className="flex-1 py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-md active:scale-95 cursor-pointer"
+                  >
+                    <Settings className="w-4 h-4" />
+                    <span>Pengaturan Akun & Profil</span>
+                  </button>
 
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="py-2.5 px-4 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Keluar</span>
-              </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowLogoutConfirm(true)}
+                    className="py-2.5 px-4 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Keluar</span>
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>

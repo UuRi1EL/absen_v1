@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../utils/axios.instance';
+import { toast } from '../../store/toastStore';
 import {
   Calendar,
   Clock,
@@ -312,11 +313,15 @@ export default function SchedulePage({ activeTab = 'schedule', setActiveTab }: S
         month: selectedMonth,
         week: selectedWeek
       });
-      setSaveSuccessMsg(`✓ Penugasan Shift ${months.find(m => m.value === selectedMonth)?.label} ${selectedYear} (${weeks.find(w => w.value === selectedWeek)?.label}) Berhasil Disimpan!`);
+      const monthName = months.find(m => m.value === selectedMonth)?.label;
+      const weekName = weeks.find(w => w.value === selectedWeek)?.label;
+      const succMsg = `Penugasan Shift ${monthName} ${selectedYear} (${weekName}) Berhasil Disimpan!`;
+      setSaveSuccessMsg(`✓ ${succMsg}`);
+      toast.success(succMsg);
       setTimeout(() => setSaveSuccessMsg(null), 4000);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal menyimpan penugasan shift.');
+      toast.error(err.response?.data?.message || 'Gagal menyimpan penugasan shift.');
     } finally {
       setIsSaving(false);
     }

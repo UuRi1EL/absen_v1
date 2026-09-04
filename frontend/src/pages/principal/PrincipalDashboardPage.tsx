@@ -4,6 +4,7 @@ import { api } from '../../utils/axios.instance';
 import Sidebar from '../../components/Sidebar';
 import NotificationDropdown from '../../components/NotificationDropdown';
 import UserProfileDropdown from '../../components/UserProfileDropdown';
+import { toast } from '../../store/toastStore';
 import { getSelfieUrl } from '../../utils/url.util';
 import {
   AlertTriangle,
@@ -105,10 +106,11 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
     setProcessingId(confirmModal.id);
     try {
       await api.patch(`/leave/${confirmModal.id}/status`, { status: confirmModal.action });
+      toast.success(`Pengajuan izin ${confirmModal.teacherName} berhasil ${confirmModal.action === 'APPROVED' ? 'disetujui' : 'ditolak'}!`);
       setConfirmModal({ show: false, id: null, teacherName: '', action: 'APPROVED' });
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal mengubah status izin.');
+      toast.error(err.response?.data?.message || 'Gagal mengubah status izin.');
     } finally {
       setProcessingId(null);
     }

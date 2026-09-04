@@ -9,6 +9,7 @@ import ReportsPage from './pages/common/ReportsPage';
 import QRTerminalPage from './pages/common/QRTerminalPage';
 import SchedulePage from './pages/common/SchedulePage';
 import SettingsPage from './pages/common/SettingsPage';
+import { toast } from './store/toastStore';
 
 function AppContent() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -58,7 +59,7 @@ function AppContent() {
     if (user.role === 'ADMIN') {
       return <QRTerminalPage onBack={() => setActiveTab('dashboard')} />;
     } else {
-      alert('⚠️ Akses Terkunci: Halaman Terminal Display QR hanya dapat dibuka oleh Admin Sekolah.');
+      toast.warning('Akses Terkunci: Halaman Terminal Display QR hanya dapat dibuka oleh Admin Sekolah.');
       setActiveTab('dashboard');
     }
   }
@@ -88,6 +89,7 @@ function AppContent() {
 }
 
 import PwaInstallPrompt from './components/PwaInstallPrompt';
+import ToastContainer from './components/ToastContainer';
 
 export default function App() {
   return (
@@ -95,6 +97,7 @@ export default function App() {
       <AuthProvider>
         <AppContent />
         <PwaInstallPrompt />
+        <ToastContainer />
       </AuthProvider>
     </ErrorBoundary>
   );

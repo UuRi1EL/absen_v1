@@ -4,6 +4,7 @@ import { api } from '../../utils/axios.instance';
 import Sidebar from '../../components/Sidebar';
 import NotificationDropdown from '../../components/NotificationDropdown';
 import UserProfileDropdown from '../../components/UserProfileDropdown';
+import { toast } from '../../store/toastStore';
 import {
   Clock,
   Calendar as CalendarIcon,
@@ -103,9 +104,9 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
         });
       }
       setShowDapodikModal(false);
-      alert('✓ Informasi Dapodik & SIMPKB berhasil diperbarui!');
+      toast.success('Informasi Dapodik & SIMPKB berhasil diperbarui!');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal memperbarui informasi Dapodik.');
+      toast.error(err.response?.data?.message || 'Gagal memperbarui informasi Dapodik.');
     } finally {
       setIsSubmittingDapodik(false);
     }
@@ -347,10 +348,10 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
           longitude: lng,
           earlyCheckoutReason
         });
-        alert('✓ Presensi Pulang (Check-Out) berhasil diverifikasi!');
+        toast.success('Presensi Pulang (Check-Out) berhasil diverifikasi!');
         fetchData();
       } catch (err: any) {
-        alert(err.response?.data?.message || 'Gagal melakukan presensi pulang.');
+        toast.error(err.response?.data?.message || 'Gagal melakukan presensi pulang.');
       } finally {
         setIsSubmittingCheckOut(false);
       }
@@ -1461,7 +1462,7 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
         <button
           onClick={() => {
             if (todayAttendance) {
-              alert('Anda sudah melakukan presensi masuk hari ini!');
+              toast.info('Anda sudah melakukan presensi masuk hari ini!');
             } else {
               handleOpenCheckInModal();
             }
@@ -1477,9 +1478,9 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
         <button
           onClick={() => {
             if (!todayAttendance) {
-              alert('Anda belum melakukan presensi masuk hari ini!');
+              toast.warning('Anda belum melakukan presensi masuk hari ini!');
             } else if (todayAttendance.checkOutTime) {
-              alert('Anda sudah melakukan presensi pulang hari ini!');
+              toast.info('Anda sudah melakukan presensi pulang hari ini!');
             } else {
               setShowCheckOutConfirm(true);
             }
