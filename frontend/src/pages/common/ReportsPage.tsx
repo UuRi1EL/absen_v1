@@ -181,20 +181,12 @@ export default function ReportsPage({ activeTab = 'reports', setActiveTab, onBac
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
-              {isLoading && (
-                <div className="flex items-center gap-2 text-xs text-brand-600 font-bold">
-                  <div className="w-3.5 h-3.5 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
-                  <span>Memuat rekap...</span>
-                </div>
-              )}
-              <button
-                onClick={handlePrint}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center gap-2 shadow-md transition cursor-pointer"
-              >
-                <Printer className="w-4 h-4" /> Cetak Lembar Dokumen
-              </button>
-            </div>
+            {isLoading && (
+              <div className="flex items-center gap-2 text-xs text-brand-600 font-bold">
+                <div className="w-3.5 h-3.5 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
+                <span>Memuat rekap...</span>
+              </div>
+            )}
           </div>
 
           {/* Fetch Error Warning */}
