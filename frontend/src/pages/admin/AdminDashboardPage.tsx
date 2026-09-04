@@ -35,7 +35,8 @@ import {
   Activity,
   FileText,
   Paperclip,
-  Trash2
+  Trash2,
+  ExternalLink
 } from 'lucide-react';
 
 interface DashboardPageProps {
@@ -94,10 +95,6 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
   const [editRole, setEditRole] = useState('TEACHER');
   const [editPosition, setEditPosition] = useState('');
   const [editEmploymentStatus, setEditEmploymentStatus] = useState('Status Aktif (PPPK)');
-  const [editUkgId, setEditUkgId] = useState('');
-  const [editNuptk, setEditNuptk] = useState('');
-  const [editPtkDapodikId, setEditPtkDapodikId] = useState('');
-  const [editBelajarId, setEditBelajarId] = useState('');
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
 
   // Reset Password State in Eye Modal
@@ -218,10 +215,6 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
     setEditRole(t.role || 'TEACHER');
     setEditPosition(t.teacherProfile?.position || (t.role === 'ADMIN' ? 'Operator Layanan Operasional' : t.role === 'PRINCIPAL' ? 'Kepala Sekolah' : 'Guru Kelas'));
     setEditEmploymentStatus(t.teacherProfile?.employmentStatus || 'Status Aktif (PPPK)');
-    setEditUkgId(t.teacherProfile?.ukgId || '');
-    setEditNuptk(t.teacherProfile?.nuptk || '');
-    setEditPtkDapodikId(t.teacherProfile?.ptkDapodikId || '');
-    setEditBelajarId(t.teacherProfile?.belajarId || '');
     setIsEditMode(false);
     setShowEyeModal(true);
   };
@@ -269,11 +262,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
         phone: editPhone.trim(),
         role: editRole,
         position: editPosition.trim(),
-        employmentStatus: editEmploymentStatus,
-        ukgId: editUkgId.trim(),
-        nuptk: editNuptk.trim(),
-        ptkDapodikId: editPtkDapodikId.trim(),
-        belajarId: editBelajarId.trim()
+        employmentStatus: editEmploymentStatus
       });
 
       toast.success(`Informasi akun & profil ${editFullName} berhasil diperbarui!`);
@@ -1152,48 +1141,28 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                   </select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="font-bold text-slate-700">No. UKG / SIMPKB</label>
-                    <input
-                      type="text"
-                      value={editUkgId}
-                      onChange={(e) => setEditUkgId(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold text-amber-600"
-                    />
+                {/* Official Ruang GTK Kemendikdasmen Info */}
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1">
+                  <div className="text-[11px] font-bold text-emerald-900 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <ExternalLink className="w-3.5 h-3.5 text-emerald-600" />
+                      Portal Resmi Ruang GTK Kemendikdasmen
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-200/80 text-emerald-800 text-[10px] font-bold">
+                      Terintegrasi
+                    </span>
                   </div>
-
-                  <div className="space-y-1">
-                    <label className="font-bold text-slate-700">NUPTK Resmi</label>
-                    <input
-                      type="text"
-                      value={editNuptk}
-                      onChange={(e) => setEditNuptk(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold text-brand-600"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="font-bold text-slate-700">PTK DAPODIK ID</label>
-                    <input
-                      type="text"
-                      value={editPtkDapodikId}
-                      onChange={(e) => setEditPtkDapodikId(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold text-emerald-600"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="font-bold text-slate-700">Akun belajar.id</label>
-                    <input
-                      type="text"
-                      value={editBelajarId}
-                      onChange={(e) => setEditBelajarId(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-900"
-                    />
-                  </div>
+                  <p className="text-[10px] text-emerald-700 leading-relaxed">
+                    Data kepegawaian Guru & Tenaga Kependidikan terhubung melalui portal resmi Kemendikdasmen:
+                  </p>
+                  <a
+                    href="https://guru.kemendikdasmen.go.id/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-bold text-emerald-800 underline hover:text-emerald-950 block pt-0.5"
+                  >
+                    https://guru.kemendikdasmen.go.id/ ↗
+                  </a>
                 </div>
 
                 <div className="flex gap-2 pt-1">
