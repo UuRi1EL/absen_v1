@@ -139,81 +139,54 @@ export default function ReportsPage({ activeTab = 'reports', setActiveTab, onBac
         {/* Main Content */}
         <main className="p-4 sm:p-8 space-y-6 max-w-7xl mx-auto w-full print-area">
 
-          {/* Header Kop Surat */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+          {/* Filter Controls Bar (Hidden in Print) */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-bold text-slate-700">Periode Rekapitulasi:</span>
+              <select
+                disabled={isLoading}
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                className="bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 disabled:opacity-50 cursor-pointer"
+              >
+                {months.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between border-b-2 border-slate-900 pb-4 gap-4 text-center sm:text-left">
-              <div className="flex items-center gap-4">
-                <img
-                  src="https://cdn.schoolpro.id/public-registration/1782136552284-18747eee3e1c432291f9002be1c93df8.webp"
-                  alt="Logo UPT SPF SD INPRES PAJJAIANG 2"
-                  className="w-16 h-16 object-contain"
-                />
-                <div>
-                  <h1 className="text-base sm:text-lg font-extrabold text-slate-900 uppercase">
-                    PEMERINTAH KOTA MAKASSAR - DINAS PENDIDIKAN
-                  </h1>
-                  <h2 className="text-lg sm:text-xl font-black text-brand-600">
-                    UPT SPF SD INPRES PAJJAIANG 2
-                  </h2>
-                  <p className="text-xs text-slate-500">
-                    Jl. Luwu Raya No.2 Perumnas Sudiang, Kel. Sudiang Raya, Kec. Biringkanaya, Kota Makassar (90552)
-                  </p>
-                </div>
-              </div>
-
-              {/* Filter Controls (Hidden in Print) */}
-              <div className="flex items-center gap-2 no-print self-center sm:self-auto">
-                {isLoading && (
-                  <div className="w-3.5 h-3.5 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin mr-1" />
-                )}
-                <select
-                  disabled={isLoading}
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                  className="bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-700 disabled:opacity-50"
-                >
-                  {months.map((m) => (
-                    <option key={m.value} value={m.value}>
-                      {m.label}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  disabled={isLoading}
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(Number(e.target.value))}
-                  className="bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-700 disabled:opacity-50"
-                >
-                  <option value={2026}>2026</option>
-                  <option value={2025}>2025</option>
-                </select>
-              </div>
+              <select
+                disabled={isLoading}
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+                className="bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 disabled:opacity-50 cursor-pointer"
+              >
+                <option value={2026}>2026</option>
+                <option value={2025}>2025</option>
+                <option value={2024}>2024</option>
+              </select>
             </div>
 
-            {/* Document Title */}
-            <div className="text-center pt-2 space-y-1">
-              <h3 className="text-base font-extrabold text-slate-900 uppercase tracking-tight">
-                {isTeacherRole
-                  ? `LAPORAN REKAPITULASI PRESENSI PRIBADI GURU`
-                  : `LAPORAN REKAPITULASI PRESENSI GURU BULANAN`}
-              </h3>
-              <p className="text-xs font-bold text-brand-600 uppercase">
-                PERIODE: {currentMonthLabel} {selectedYear}
-              </p>
-              {isTeacherRole && (
-                <div className="text-xs font-bold text-slate-700 pt-1">
-                  NAMA GURU: <span className="text-brand-600 font-extrabold">{user?.fullName || '-'}</span> (NIP: {user?.nip || '-'})
+            <div className="flex items-center gap-2">
+              {isLoading && (
+                <div className="flex items-center gap-2 text-xs text-brand-600 font-bold">
+                  <div className="w-3.5 h-3.5 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
+                  <span>Memuat rekap...</span>
                 </div>
               )}
+              <button
+                onClick={handlePrint}
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center gap-2 shadow-md transition cursor-pointer"
+              >
+                <Printer className="w-4 h-4" /> Cetak Lembar Dokumen
+              </button>
             </div>
-
           </div>
 
           {/* Fetch Error Warning */}
           {fetchError && (
-            <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-xs font-bold flex items-center justify-between">
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-xs font-bold flex items-center justify-between no-print">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                 <span>{fetchError}</span>
@@ -227,8 +200,82 @@ export default function ReportsPage({ activeTab = 'reports', setActiveTab, onBac
             </div>
           )}
 
-          {/* Table Summary */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+          {/* Official Document Sheet Container */}
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm space-y-6 print:border-none print:shadow-none print:p-0">
+
+            {/* AUTENTIK KOP SURAT PEMERINTAH KOTA MAKASSAR */}
+            <div className="w-full" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
+              <div className="flex items-center justify-between gap-2 sm:gap-4 pb-1">
+                
+                {/* Logo Kiri: Lambang Pemkot Makassar */}
+                <div className="w-16 sm:w-24 shrink-0 flex justify-center items-center">
+                  <img
+                    src="/images/logo_makassar.png"
+                    alt="Lambang Pemerintah Kota Makassar"
+                    className="w-14 sm:w-20 h-auto object-contain"
+                  />
+                </div>
+
+                {/* Teks Kop Surat Resmi (Tengah) */}
+                <div className="flex-1 text-center text-black leading-tight space-y-0.5 sm:space-y-1">
+                  <h1 className="text-sm sm:text-lg font-bold tracking-wide uppercase">
+                    PEMERINTAH KOTA MAKASSAR
+                  </h1>
+                  <h2 className="text-sm sm:text-xl font-bold tracking-tight uppercase">
+                    UPT SPF SEKOLAH DASAR INPRES PAJJAIANG 2
+                  </h2>
+                  <h3 className="text-[11px] sm:text-base font-bold tracking-normal uppercase">
+                    KECAMATAN BIRINGKANAYA KELURAHAN LAIKANG
+                  </h3>
+                  <div className="text-[10px] sm:text-sm font-bold flex items-center justify-center gap-4 sm:gap-12 pt-0.5">
+                    <span>NPSN : 40307607</span>
+                    <span>NSS : 101 196 012411</span>
+                  </div>
+                  <div className="text-[9px] sm:text-xs italic pt-0.5">
+                    <span>Jl. Luwu Raya No.2 BSP Makassar Tlp.(0411) 555 747 e-mail : </span>
+                    <a 
+                      href="mailto:sdipajjaiangII@gmail.com" 
+                      className="text-[#0056b3] not-italic underline hover:opacity-80"
+                    >
+                      sdipajjaiangII@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* Logo Kanan: Logo Tut Wuri Handayani Kemendikbud */}
+                <div className="w-16 sm:w-24 shrink-0 flex justify-center items-center">
+                  <img
+                    src="/images/logo_tutwuri.png"
+                    alt="Logo Tut Wuri Handayani"
+                    className="w-14 sm:w-20 h-auto object-contain"
+                  />
+                </div>
+
+              </div>
+
+              {/* Garis Pembatas Kop Surat Resmi (Garis Tebal Atas + Garis Tipis Bawah) */}
+              <div className="w-full pt-1">
+                <div className="border-t-[3.5px] border-black w-full" />
+                <div className="border-t-[1.5px] border-black w-full mt-[2px]" />
+              </div>
+            </div>
+
+            {/* Judul Laporan Dokumen */}
+            <div className="text-center pt-2 space-y-1" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
+              <h3 className="text-sm sm:text-base font-bold text-black uppercase tracking-tight underline">
+                {isTeacherRole
+                  ? `LAPORAN REKAPITULASI PRESENSI PRIBADI GURU`
+                  : `LAPORAN REKAPITULASI PRESENSI GURU BULANAN`}
+              </h3>
+              <p className="text-xs font-bold text-black uppercase">
+                PERIODE BULAN : {currentMonthLabel} {selectedYear}
+              </p>
+              {isTeacherRole && (
+                <div className="text-xs font-bold text-slate-800 pt-1" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                  NAMA GURU: <span className="text-brand-600 font-extrabold">{user?.fullName || '-'}</span> (NIP: {user?.nip || '-'})
+                </div>
+              )}
+            </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border border-slate-200">
