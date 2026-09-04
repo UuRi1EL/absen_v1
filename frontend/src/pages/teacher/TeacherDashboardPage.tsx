@@ -24,8 +24,8 @@ import {
   HelpCircle,
   UserCheck,
   ShieldCheck,
-  Link,
-  Edit3
+  Edit3,
+  ExternalLink
 } from 'lucide-react';
 import { AttendanceRecord } from '../../types/auth.types';
 
@@ -78,14 +78,11 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
   // Check-Out State
   const [isSubmittingCheckOut, setIsSubmittingCheckOut] = useState(false);
 
-  // Edit Dapodik & SIMPKB Modal State
+  // Edit Dapodik & Ruang GTK Modal State
   const [showDapodikModal, setShowDapodikModal] = useState(false);
   const [dapodikForm, setDapodikForm] = useState({
     employmentStatus: user?.teacherProfile?.employmentStatus || 'Status Aktif (PPPK)',
-    ukgId: user?.teacherProfile?.ukgId || '202300256861',
-    nuptk: user?.teacherProfile?.nuptk || user?.nip || '4551777678130053',
-    ptkDapodikId: user?.teacherProfile?.ptkDapodikId || '2B3B9FD5-5227-44BF',
-    belajarId: user?.teacherProfile?.belajarId || 'andi.hasta@guru.sd.belajar.id'
+    position: user?.teacherProfile?.position || 'Guru Kelas'
   });
   const [isSubmittingDapodik, setIsSubmittingDapodik] = useState(false);
 
@@ -518,34 +515,33 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-0.5">
-                    <div className="text-[10px] text-slate-400 font-medium">No. UKG / SIMPKB-ID</div>
-                    <div className="font-mono font-bold text-amber-300">
-                      {user?.teacherProfile?.ukgId || '202300256861'}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">NIP Resmi</div>
+                    <div className="font-mono font-bold text-amber-300 text-sm truncate" title={user?.nip || '-'}>
+                      {user?.nip || '-'}
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-0.5">
-                    <div className="text-[10px] text-slate-400 font-medium">NUPTK Resmi</div>
-                    <div className="font-mono font-bold text-brand-300">
-                      {user?.teacherProfile?.nuptk || user?.nip || '4551777678130053'}
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Peran / Jabatan</div>
+                    <div className="font-bold text-sky-300 text-sm truncate" title={user?.teacherProfile?.position || (user?.role === 'TEACHER' ? 'Guru Kelas' : 'Tenaga Pendidik')}>
+                      {user?.teacherProfile?.position || (user?.role === 'TEACHER' ? 'Guru Kelas' : 'Tenaga Pendidik')}
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-0.5">
-                    <div className="text-[10px] text-slate-400 font-medium">PTK DAPODIK ID</div>
-                    <div className="font-mono font-bold text-emerald-300 truncate">
-                      {user?.teacherProfile?.ptkDapodikId || '2B3B9FD5-5227-44BF'}
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-0.5">
-                    <div className="text-[10px] text-slate-400 font-medium">Akun Pembelajaran</div>
-                    <div className="font-bold text-emerald-400 flex items-center gap-1 truncate" title={user?.teacherProfile?.belajarId || 'andi.hasta@guru.sd.belajar.id'}>
-                      <Link className="w-3 h-3 shrink-0" />
-                      <span className="truncate">{user?.teacherProfile?.belajarId || 'Taut belajar.id'}</span>
-                    </div>
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Ruang GTK</div>
+                    <a
+                      href="https://guru.kemendikdasmen.go.id/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 truncate group/link transition cursor-pointer"
+                      title="Buka Portal Resmi Ruang GTK Kemendikdasmen: https://guru.kemendikdasmen.go.id/"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 shrink-0 group-hover/link:translate-x-0.5 transition-transform" />
+                      <span className="truncate underline underline-offset-2">guru.kemendikdasmen.go.id</span>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -1380,11 +1376,34 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
 
             <form onSubmit={handleSaveDapodikInfo} className="space-y-3.5 text-xs">
               <div className="space-y-1">
+                <label className="font-bold text-slate-700">Nomor Induk Pegawai (NIP)</label>
+                <input
+                  type="text"
+                  readOnly
+                  value={user?.nip || ''}
+                  className="w-full bg-slate-100 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold text-slate-600 cursor-not-allowed"
+                />
+                <p className="text-[10px] text-slate-400">NIP resmi Anda terdaftar di sistem.</p>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">Peran / Jabatan</label>
+                <input
+                  type="text"
+                  required
+                  value={dapodikForm.position}
+                  onChange={(e) => setDapodikForm({ ...dapodikForm, position: e.target.value })}
+                  placeholder="Contoh: Guru Kelas / Guru Bidang Studi"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-900"
+                />
+              </div>
+
+              <div className="space-y-1">
                 <label className="font-bold text-slate-700">Status Pegawai / Kepegawaian</label>
                 <select
                   value={dapodikForm.employmentStatus}
                   onChange={(e) => setDapodikForm({ ...dapodikForm, employmentStatus: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold cursor-pointer"
                 >
                   <option value="Status Aktif (PPPK)">Status Aktif (PPPK)</option>
                   <option value="Status Aktif (PNS)">Status Aktif (PNS)</option>
@@ -1393,50 +1412,22 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="font-bold text-slate-700">No. UKG / SIMPKB-ID</label>
-                  <input
-                    type="text"
-                    required
-                    value={dapodikForm.ukgId}
-                    onChange={(e) => setDapodikForm({ ...dapodikForm, ukgId: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold text-amber-600"
-                  />
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1">
+                <div className="text-[11px] font-bold text-emerald-900 flex items-center gap-1.5">
+                  <ExternalLink className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Portal Resmi Ruang GTK Kemendikdasmen</span>
                 </div>
-
-                <div className="space-y-1">
-                  <label className="font-bold text-slate-700">NUPTK Resmi</label>
-                  <input
-                    type="text"
-                    required
-                    value={dapodikForm.nuptk}
-                    onChange={(e) => setDapodikForm({ ...dapodikForm, nuptk: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold text-brand-600"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">PTK DAPODIK ID</label>
-                <input
-                  type="text"
-                  required
-                  value={dapodikForm.ptkDapodikId}
-                  onChange={(e) => setDapodikForm({ ...dapodikForm, ptkDapodikId: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold text-emerald-600"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Akun Pembelajaran (belajar.id)</label>
-                <input
-                  type="text"
-                  required
-                  value={dapodikForm.belajarId}
-                  onChange={(e) => setDapodikForm({ ...dapodikForm, belajarId: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-900"
-                />
+                <p className="text-[10px] text-emerald-700 leading-relaxed">
+                  Akses layanan Guru dan Tenaga Kependidikan terintegrasi dapat dibuka langsung melalui tautan:
+                </p>
+                <a
+                  href="https://guru.kemendikdasmen.go.id/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-bold text-emerald-800 underline hover:text-emerald-900 block pt-0.5"
+                >
+                  https://guru.kemendikdasmen.go.id/ ↗
+                </a>
               </div>
 
               <button

@@ -7,8 +7,8 @@ import {
   Settings, 
   X, 
   Building2, 
-  Mail, 
-  Award
+  Award,
+  ExternalLink
 } from 'lucide-react';
 
 import { toast } from '../store/toastStore';
@@ -38,9 +38,6 @@ export default function UserProfileDropdown({
       : (user.teacherProfile?.position || 'Guru / Tenaga Pendidik');
 
   const nipOrNuptk = user.teacherProfile?.nuptk || user.nip || '-';
-  const ukgId = user.teacherProfile?.ukgId || '202300256861';
-  const ptkDapodikId = user.teacherProfile?.ptkDapodikId || '4551777678130053';
-  const belajarId = user.teacherProfile?.belajarId || `${user.nip || 'pegawai'}@guru.sd.belajar.id`;
   const employmentStatus = user.teacherProfile?.employmentStatus || (user.role === 'TEACHER' ? 'Status Aktif (PPPK)' : 'Pegawai Tetap');
   const schoolName = user.teacherProfile?.school?.name || 'UPT SPF SD INPRES PAJJAIANG 2';
 
@@ -167,40 +164,39 @@ export default function UserProfileDropdown({
               </div>
             </div>
 
-            {/* Detailed Verified Dapodik Grid */}
+            {/* Detailed Verified Dapodik & Ruang GTK Grid */}
             <div className="p-5 space-y-3 bg-slate-900">
               <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">
-                INTEGRASI PARAMETER AKUN & SIMPKB
+                INTEGRASI PARAMETER AKUN & RUANG GTK
               </span>
 
-              <div className="grid grid-cols-2 gap-2.5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
                 <div className="p-3 rounded-xl bg-slate-800/70 border border-slate-700/70 space-y-1">
-                  <div className="text-[10px] text-slate-400 font-medium">NIP / NUPTK Resmi</div>
-                  <div className="font-mono font-bold text-emerald-400 truncate" title={nipOrNuptk}>
-                    {nipOrNuptk}
+                  <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">NIP Resmi</div>
+                  <div className="font-mono font-bold text-amber-300 text-sm truncate" title={user.nip || '-'}>
+                    {user.nip || '-'}
                   </div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-800/70 border border-slate-700/70 space-y-1">
-                  <div className="text-[10px] text-slate-400 font-medium">No. UKG / SIMPKB-ID</div>
-                  <div className="font-mono font-bold text-amber-300 truncate" title={ukgId}>
-                    {ukgId}
+                  <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Peran / Jabatan</div>
+                  <div className="font-bold text-sky-300 text-sm truncate" title={displayRole}>
+                    {displayRole}
                   </div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-800/70 border border-slate-700/70 space-y-1">
-                  <div className="text-[10px] text-slate-400 font-medium">PTK DAPODIK ID</div>
-                  <div className="font-mono font-bold text-sky-400 truncate" title={ptkDapodikId}>
-                    {ptkDapodikId}
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-800/70 border border-slate-700/70 space-y-1">
-                  <div className="text-[10px] text-slate-400 font-medium">Email / Akun Pembelajaran</div>
-                  <div className="font-bold text-emerald-300 truncate flex items-center gap-1" title={belajarId}>
-                    <Mail className="w-3 h-3 text-emerald-400 shrink-0" />
-                    <span className="truncate">{belajarId}</span>
-                  </div>
+                  <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Ruang GTK</div>
+                  <a
+                    href="https://guru.kemendikdasmen.go.id/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 truncate group/link transition cursor-pointer"
+                    title="Buka Portal Resmi Ruang GTK: https://guru.kemendikdasmen.go.id/"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0 group-hover/link:translate-x-0.5 transition-transform" />
+                    <span className="truncate underline underline-offset-2">Ruang GTK ↗</span>
+                  </a>
                 </div>
               </div>
             </div>
