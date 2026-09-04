@@ -25,6 +25,12 @@ function AppContent() {
       window.history.replaceState({}, document.title, window.location.pathname);
       setActiveTab('attendance');
     }
+
+    const handleNavigateTab = (e: any) => {
+      if (e.detail) setActiveTab(e.detail);
+    };
+    window.addEventListener('navigateTab', handleNavigateTab);
+    return () => window.removeEventListener('navigateTab', handleNavigateTab);
   }, []);
 
   if (isLoading) {

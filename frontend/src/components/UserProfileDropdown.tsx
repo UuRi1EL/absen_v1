@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getSelfieUrl } from '../utils/url.util';
 import { 
@@ -15,12 +14,16 @@ import {
 interface UserProfileDropdownProps {
   customAvatarClass?: string;
   showTextLabels?: boolean;
+  onOpenSettings?: () => void;
 }
 
-export default function UserProfileDropdown({ customAvatarClass, showTextLabels = true }: UserProfileDropdownProps) {
+export default function UserProfileDropdown({ 
+  customAvatarClass, 
+  showTextLabels = true,
+  onOpenSettings 
+}: UserProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   if (!user) return null;
 
@@ -40,14 +43,17 @@ export default function UserProfileDropdown({ customAvatarClass, showTextLabels 
 
   const handleGoToSettings = () => {
     setIsOpen(false);
-    navigate('/settings');
+    if (onOpenSettings) {
+      onOpenSettings();
+    } else {
+      window.dispatchEvent(new CustomEvent('navigateTab', { detail: 'settings' }));
+    }
   };
 
   const handleLogout = () => {
     setIsOpen(false);
     if (window.confirm('Apakah Anda yakin ingin keluar dari akun presensi?')) {
       logout();
-      navigate('/login');
     }
   };
 
@@ -112,7 +118,7 @@ export default function UserProfileDropdown({ customAvatarClass, showTextLabels 
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition"
+                className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
