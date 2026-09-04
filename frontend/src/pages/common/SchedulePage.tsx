@@ -586,10 +586,10 @@ export default function SchedulePage({ activeTab = 'schedule', setActiveTab }: S
           {isAdminRole && (
             <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border border-slate-200">
+                <table className="w-full text-left text-xs border-collapse border border-slate-300">
                   <thead>
-                    <tr className="bg-slate-100 text-slate-900 font-extrabold uppercase border-b border-slate-200">
-                      <th className="p-3 border-r border-slate-200 w-12 text-center">
+                    <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="p-3 border border-slate-300 w-12 text-center">
                         <button
                           type="button"
                           onClick={handleToggleSelectAll}
@@ -603,11 +603,11 @@ export default function SchedulePage({ activeTab = 'schedule', setActiveTab }: S
                           )}
                         </button>
                       </th>
-                      <th className="p-3 border-r border-slate-200">NAMA GURU / NIP</th>
+                      <th className="p-3 border border-slate-300">NAMA GURU / NIP</th>
                       {daysOfWeek.map((d) => (
                         <th
                           key={d.id}
-                          className={`p-3 border-r border-slate-200 text-center min-w-[145px] relative ${
+                          className={`p-3 border border-slate-300 text-center min-w-[145px] relative ${
                             d.isToday ? 'bg-brand-50 text-brand-700 font-black ring-2 ring-brand-400 ring-inset' : ''
                           }`}
                         >
@@ -652,7 +652,7 @@ export default function SchedulePage({ activeTab = 'schedule', setActiveTab }: S
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200">
+                  <tbody>
                     {teachersList.length > 0 ? (
                       teachersList.map((t: any) => {
                         const teacherShifts = schedulesMap[t.id] || {};
@@ -663,7 +663,7 @@ export default function SchedulePage({ activeTab = 'schedule', setActiveTab }: S
                             key={t.id}
                             className={`transition ${isSelected ? 'bg-brand-50/50 hover:bg-brand-50/80' : 'hover:bg-slate-50'}`}
                           >
-                            <td className="p-3 text-center border-r border-slate-200">
+                            <td className="p-3 text-center border border-slate-300">
                               <button
                                 type="button"
                                 onClick={() => handleToggleSelectTeacher(t.id)}
@@ -676,7 +676,7 @@ export default function SchedulePage({ activeTab = 'schedule', setActiveTab }: S
                                 )}
                               </button>
                             </td>
-                            <td className="p-3 border-r border-slate-200">
+                            <td className="p-3 border border-slate-300">
                               <div className="font-extrabold text-slate-900">{t.fullName}</div>
                               <div className="font-mono text-[10px] text-slate-500">NIP: {t.nip}</div>
                             </td>
@@ -687,7 +687,7 @@ export default function SchedulePage({ activeTab = 'schedule', setActiveTab }: S
                               return (
                                 <td
                                   key={d.id}
-                                  className={`p-2 border-r border-slate-200 text-center ${
+                                  className={`p-2 border border-slate-300 text-center ${
                                     isLocked ? 'bg-slate-100/70' : ''
                                   }`}
                                 >
@@ -723,7 +723,7 @@ export default function SchedulePage({ activeTab = 'schedule', setActiveTab }: S
                       })
                     ) : (
                       <tr>
-                        <td colSpan={8} className="p-6 text-center text-slate-400">
+                        <td colSpan={8} className="p-6 text-center text-slate-400 border border-slate-300">
                           Memuat data daftar guru dari database...
                         </td>
                       </tr>

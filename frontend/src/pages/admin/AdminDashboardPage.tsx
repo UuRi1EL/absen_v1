@@ -676,30 +676,30 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border border-slate-100 rounded-2xl">
+                  <table className="w-full text-left text-xs border-collapse border border-slate-300">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
-                        <th className="p-3.5">NAMA GURU</th>
-                        <th className="p-3.5">NIP</th>
-                        <th className="p-3.5">JAM MASUK</th>
-                        <th className="p-3.5">JAM PULANG</th>
-                        <th className="p-3.5">STATUS</th>
-                        <th className="p-3.5 text-center">FOTO SELFIE</th>
+                      <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase tracking-wider text-[11px]">
+                        <th className="p-3 border border-slate-300">NAMA GURU</th>
+                        <th className="p-3 border border-slate-300">NIP</th>
+                        <th className="p-3 border border-slate-300">JAM MASUK</th>
+                        <th className="p-3 border border-slate-300">JAM PULANG</th>
+                        <th className="p-3 border border-slate-300">STATUS</th>
+                        <th className="p-3 border border-slate-300 text-center">FOTO SELFIE</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody>
                       {todayAttendances.length > 0 ? (
                         todayAttendances.map((rec) => (
                           <tr key={rec.id} className="hover:bg-slate-50/50 transition">
-                            <td className="p-3.5 font-bold text-slate-900">{rec.user?.fullName}</td>
-                            <td className="p-3.5 font-mono text-slate-600">{rec.user?.nip}</td>
-                            <td className="p-3.5 font-bold text-emerald-600">
+                            <td className="p-3 border border-slate-300 font-bold text-slate-900">{rec.user?.fullName}</td>
+                            <td className="p-3 border border-slate-300 font-mono text-slate-600">{rec.user?.nip}</td>
+                            <td className="p-3 border border-slate-300 font-bold text-emerald-600">
                               {rec.checkInTime ? new Date(rec.checkInTime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-'}
                             </td>
-                            <td className="p-3.5 font-bold text-slate-700">
+                            <td className="p-3 border border-slate-300 font-bold text-slate-700">
                               {rec.checkOutTime ? new Date(rec.checkOutTime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-'}
                             </td>
-                            <td className="p-3.5">
+                            <td className="p-3 border border-slate-300">
                               {rec.status === 'PRESENT' ? (
                                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px]">
                                   Tepat Waktu
@@ -710,7 +710,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                                 </span>
                               )}
                             </td>
-                            <td className="p-3 text-center">
+                            <td className="p-3 border border-slate-300 text-center">
                               {rec.selfieUrl || rec.selfiePhotoUrl ? (
                                 <div className="flex items-center justify-center gap-2">
                                   <img
@@ -745,7 +745,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={6} className="p-8 text-center text-slate-400">
+                          <td colSpan={6} className="p-8 text-center text-slate-400 border border-slate-300">
                             Belum ada guru yang melakukan presensi masuk hari ini.
                           </td>
                         </tr>
@@ -794,21 +794,21 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border border-slate-100 rounded-2xl">
+                  <table className="w-full text-left text-xs border-collapse border border-slate-300">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
-                        <th className="p-3.5">NIP</th>
-                        <th className="p-3.5">NAMA LENGKAP</th>
-                        <th className="p-3.5">PERAN / JABATAN</th>
-                        <th className="p-3.5">EMAIL</th>
-                        <th className="p-3.5">STATUS</th>
-                        <th className="p-3.5 text-center">AKSI</th>
+                      <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase tracking-wider text-[11px]">
+                        <th className="p-3 border border-slate-300">NIP</th>
+                        <th className="p-3 border border-slate-300">NAMA LENGKAP</th>
+                        <th className="p-3 border border-slate-300">PERAN / JABATAN</th>
+                        <th className="p-3 border border-slate-300">EMAIL</th>
+                        <th className="p-3 border border-slate-300">STATUS</th>
+                        <th className="p-3 border border-slate-300 text-center">AKSI</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody>
                       {isLoading ? (
                         <tr>
-                          <td colSpan={6} className="p-8 text-center text-slate-400 font-bold">
+                          <td colSpan={6} className="p-8 text-center text-slate-400 font-bold border border-slate-300">
                             <div className="flex items-center justify-center gap-2">
                               <div className="w-4 h-4 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
                               <span>Memuat data pengguna...</span>
@@ -818,9 +818,9 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                       ) : filteredTeachers.length > 0 ? (
                         filteredTeachers.map((t) => (
                           <tr key={t.id} className="hover:bg-slate-50/50 transition">
-                            <td className="p-3.5 font-mono font-bold text-slate-900">{t.nip}</td>
-                            <td className="p-3.5 font-bold text-slate-900">{t.fullName}</td>
-                            <td className="p-3.5 text-slate-600">
+                            <td className="p-3 border border-slate-300 font-mono font-bold text-slate-900">{t.nip}</td>
+                            <td className="p-3 border border-slate-300 font-bold text-slate-900">{t.fullName}</td>
+                            <td className="p-3 border border-slate-300 text-slate-600">
                               {t.role === 'ADMIN' ? (
                                 <span className="px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-[10px] inline-flex items-center gap-1 border border-amber-300">
                                   <Crown className="w-3 h-3 text-amber-600" /> Admin (1-of-1)
@@ -836,8 +836,8 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                               )}{' '}
                               <span className="text-[11px]">{t.teacherProfile?.position || ''}</span>
                             </td>
-                            <td className="p-3.5 text-slate-500">{t.email}</td>
-                            <td className="p-3.5">
+                            <td className="p-3 border border-slate-300 text-slate-500">{t.email}</td>
+                            <td className="p-3 border border-slate-300">
                               {t.isActive ? (
                                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px]">
                                   Aktif
@@ -848,7 +848,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                                 </span>
                               )}
                             </td>
-                            <td className="p-3.5 text-center">
+                            <td className="p-3 border border-slate-300 text-center">
                               <div className="flex items-center justify-center gap-1.5">
                                 <button
                                   onClick={() => handleOpenEyeModal(t)}
@@ -870,7 +870,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={6} className="p-6 text-center text-slate-400">
+                          <td colSpan={6} className="p-6 text-center text-slate-400 border border-slate-300">
                             Tidak ada akun guru yang ditemukan.
                           </td>
                         </tr>
@@ -942,34 +942,34 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
+                  <table className="w-full text-left text-xs border-collapse border border-slate-300">
                     <thead>
-                      <tr className="border-b border-slate-200 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
-                        <th className="py-3 px-3">Guru Pemohon</th>
-                        <th className="py-3 px-3">Periode Izin</th>
-                        <th className="py-3 px-3">Alasan Izin</th>
-                        <th className="py-3 px-3">Dokumen Surat</th>
-                        <th className="py-3 px-3">Status</th>
-                        <th className="py-3 px-3">Persetujuan Kepsek</th>
+                      <tr className="bg-slate-100 text-slate-700 text-[11px] font-extrabold uppercase tracking-wider">
+                        <th className="p-3 border border-slate-300">Guru Pemohon</th>
+                        <th className="p-3 border border-slate-300">Periode Izin</th>
+                        <th className="p-3 border border-slate-300">Alasan Izin</th>
+                        <th className="p-3 border border-slate-300">Dokumen Surat</th>
+                        <th className="p-3 border border-slate-300">Status</th>
+                        <th className="p-3 border border-slate-300">Persetujuan Kepsek</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 text-xs">
+                    <tbody className="text-xs">
                       {allLeaveRequests.filter(r => leaveFilterStatus === 'ALL' || r.status === leaveFilterStatus).length > 0 ? (
                         allLeaveRequests
                           .filter(r => leaveFilterStatus === 'ALL' || r.status === leaveFilterStatus)
                           .map((req) => (
                             <tr key={req.id} className="hover:bg-slate-50/80 transition">
-                              <td className="py-3.5 px-3">
+                              <td className="p-3 border border-slate-300">
                                 <div className="font-extrabold text-slate-900">{req.teacher?.fullName || 'Guru'}</div>
                                 <div className="text-[10px] text-slate-500 font-mono">NIP: {req.teacher?.nip}</div>
                               </td>
-                              <td className="py-3.5 px-3 font-semibold text-slate-800">
+                              <td className="p-3 border border-slate-300 font-semibold text-slate-800">
                                 {new Date(req.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} s/d {new Date(req.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </td>
-                              <td className="py-3.5 px-3 text-slate-700 max-w-xs truncate font-medium">
+                              <td className="p-3 border border-slate-300 text-slate-700 max-w-xs truncate font-medium">
                                 {req.reason}
                               </td>
-                              <td className="py-3.5 px-3">
+                              <td className="p-3 border border-slate-300">
                                 {req.attachment ? (
                                   <a
                                     href={req.attachment}
@@ -983,7 +983,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                                   <span className="text-slate-400 italic">Tanpa Lampiran</span>
                                 )}
                               </td>
-                              <td className="py-3.5 px-3">
+                              <td className="p-3 border border-slate-300">
                                 {req.status === 'APPROVED' && (
                                   <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
                                     ✓ DISETUJUI
@@ -1000,14 +1000,14 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                                   </span>
                                 )}
                               </td>
-                              <td className="py-3.5 px-3 text-slate-600 font-medium">
+                              <td className="p-3 border border-slate-300 text-slate-600 font-medium">
                                 {req.approvedBy?.fullName || '-'}
                               </td>
                             </tr>
                           ))
                       ) : (
                         <tr>
-                          <td colSpan={6} className="py-8 text-center text-slate-400 text-xs italic">
+                          <td colSpan={6} className="py-8 text-center text-slate-400 text-xs italic border border-slate-300">
                             Belum ada transaksi permohonan izin yang sesuai filter.
                           </td>
                         </tr>

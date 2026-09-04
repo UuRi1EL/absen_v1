@@ -421,20 +421,20 @@ export default function TeacherDashboardPage() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left text-xs border-collapse border border-slate-300">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-y border-slate-100">
-                    <th className="p-3.5 rounded-l-xl">TANGGAL</th>
-                    <th className="p-3.5">MASUK</th>
-                    <th className="p-3.5">PULANG</th>
-                    <th className="p-3.5 rounded-r-xl">STATUS</th>
+                  <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase tracking-wider text-[11px]">
+                    <th className="p-3 border border-slate-300">TANGGAL</th>
+                    <th className="p-3 border border-slate-300">MASUK</th>
+                    <th className="p-3 border border-slate-300">PULANG</th>
+                    <th className="p-3 border border-slate-300">STATUS</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody>
                   {history.length > 0 ? (
                     history.slice(0, 5).map((record) => (
-                      <tr key={record.id} className="hover:bg-slate-50/50 transition font-medium">
-                        <td className="p-3.5 text-slate-900 font-bold">
+                      <tr key={record.id} className="hover:bg-slate-50/70 transition font-medium">
+                        <td className="p-3 border border-slate-300 text-slate-900 font-bold">
                           {new Date(record.date).toLocaleDateString('id-ID', {
                             weekday: 'short',
                             day: 'numeric',
@@ -442,7 +442,7 @@ export default function TeacherDashboardPage() {
                             year: 'numeric'
                           })}
                         </td>
-                        <td className="p-3.5 text-slate-700">
+                        <td className="p-3 border border-slate-300 text-slate-700">
                           {record.checkInTime
                             ? new Date(record.checkInTime).toLocaleTimeString('id-ID', {
                                 hour: '2-digit',
@@ -450,7 +450,7 @@ export default function TeacherDashboardPage() {
                               })
                             : '-'}
                         </td>
-                        <td className="p-3.5 text-slate-700">
+                        <td className="p-3 border border-slate-300 text-slate-700">
                           {record.checkOutTime
                             ? new Date(record.checkOutTime).toLocaleTimeString('id-ID', {
                                 hour: '2-digit',
@@ -458,7 +458,7 @@ export default function TeacherDashboardPage() {
                               })
                             : '-'}
                         </td>
-                        <td className="p-3.5">
+                        <td className="p-3 border border-slate-300">
                           {record.status === 'PRESENT' ? (
                             <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-extrabold text-[10px]">
                               Tepat Waktu
@@ -473,7 +473,7 @@ export default function TeacherDashboardPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="p-6 text-center text-slate-400">
+                      <td colSpan={4} className="p-6 text-center text-slate-400 border border-slate-300">
                         Belum ada riwayat presensi yang dicatat.
                       </td>
                     </tr>

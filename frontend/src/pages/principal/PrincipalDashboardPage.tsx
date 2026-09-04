@@ -297,33 +297,33 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border border-slate-100 rounded-2xl">
+                  <table className="w-full text-left text-xs border-collapse border border-slate-300">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-400 font-extrabold uppercase tracking-wider border-b border-slate-100 text-[10px]">
-                        <th className="p-3.5">NAMA GURU PEMOHON</th>
-                        <th className="p-3.5">NIP</th>
-                        <th className="p-3.5">JAM MASUK</th>
-                        <th className="p-3.5">JAM PULANG</th>
-                        <th className="p-3.5">STATUS DISIPLIN</th>
-                        <th className="p-3.5 text-center">FOTO SELFIE ABSEN</th>
+                      <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase tracking-wider text-[11px]">
+                        <th className="p-3 border border-slate-300">NAMA GURU PEMOHON</th>
+                        <th className="p-3 border border-slate-300">NIP</th>
+                        <th className="p-3 border border-slate-300">JAM MASUK</th>
+                        <th className="p-3 border border-slate-300">JAM PULANG</th>
+                        <th className="p-3 border border-slate-300">STATUS DISIPLIN</th>
+                        <th className="p-3 border border-slate-300 text-center">FOTO SELFIE ABSEN</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody>
                       {todayAttendances.length > 0 ? (
                         todayAttendances.map((rec) => (
                           <tr key={rec.id} className="hover:bg-slate-50/70 transition">
-                            <td className="p-3.5">
+                            <td className="p-3 border border-slate-300">
                               <div className="font-extrabold text-slate-900">{rec.user?.fullName}</div>
                               <div className="text-[10px] text-slate-500 font-semibold">{rec.user?.teacherProfile?.position || 'Guru Kelas'}</div>
                             </td>
-                            <td className="p-3.5 font-mono text-slate-600 font-bold">{rec.user?.nip}</td>
-                            <td className="p-3.5 font-bold text-emerald-600">
+                            <td className="p-3 border border-slate-300 font-mono text-slate-600 font-bold">{rec.user?.nip}</td>
+                            <td className="p-3 border border-slate-300 font-bold text-emerald-600">
                               {rec.checkInTime ? new Date(rec.checkInTime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WITA' : '-'}
                             </td>
-                            <td className="p-3.5 font-bold text-slate-700">
+                            <td className="p-3 border border-slate-300 font-bold text-slate-700">
                               {rec.checkOutTime ? new Date(rec.checkOutTime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WITA' : '-'}
                             </td>
-                            <td className="p-3.5">
+                            <td className="p-3 border border-slate-300">
                               {rec.status === 'PRESENT' ? (
                                 <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold text-[10px]">
                                   ✓ Tepat Waktu
@@ -334,7 +334,7 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
                                 </span>
                               )}
                             </td>
-                            <td className="p-3 text-center">
+                            <td className="p-3 border border-slate-300 text-center">
                               {rec.selfieUrl || rec.selfiePhotoUrl ? (
                                 <div className="flex items-center justify-center gap-2">
                                   <img
@@ -360,7 +360,7 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={6} className="p-8 text-center text-slate-400 text-xs italic">
+                          <td colSpan={6} className="p-8 text-center text-slate-400 text-xs italic border border-slate-300">
                             Belum ada guru yang melakukan presensi masuk hari ini.
                           </td>
                         </tr>
@@ -482,36 +482,36 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
                 <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
                   <h3 className="text-sm font-extrabold text-slate-900">Riwayat Surat Izin Yang Telah Diproses</h3>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse text-xs">
+                    <table className="w-full text-left text-xs border-collapse border border-slate-300">
                       <thead>
-                        <tr className="border-b border-slate-200 text-slate-400 font-extrabold uppercase text-[10px]">
-                          <th className="p-3">Guru Pemohon</th>
-                          <th className="p-3">Periode Izin</th>
-                          <th className="p-3">Alasan</th>
-                          <th className="p-3">Dokumen Surat</th>
-                          <th className="p-3">Status Keputusan</th>
+                        <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase text-[10px] tracking-wider">
+                          <th className="p-3 border border-slate-300">Guru Pemohon</th>
+                          <th className="p-3 border border-slate-300">Periode Izin</th>
+                          <th className="p-3 border border-slate-300">Alasan</th>
+                          <th className="p-3 border border-slate-300">Dokumen Surat</th>
+                          <th className="p-3 border border-slate-300">Status Keputusan</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody>
                         {historyRequests.length > 0 ? (
                           historyRequests.map((req) => (
                             <tr key={req.id} className="hover:bg-slate-50 transition">
-                              <td className="p-3 font-bold text-slate-900">
+                              <td className="p-3 border border-slate-300 font-bold text-slate-900">
                                 <div>{req.teacher?.fullName}</div>
                                 <div className="text-[10px] text-slate-500 font-mono">NIP: {req.teacher?.nip}</div>
                               </td>
-                              <td className="p-3 font-semibold text-slate-700">
+                              <td className="p-3 border border-slate-300 font-semibold text-slate-700">
                                 {new Date(req.startDate).toLocaleDateString('id-ID')} s/d {new Date(req.endDate).toLocaleDateString('id-ID')}
                               </td>
-                              <td className="p-3 text-slate-600 max-w-xs truncate">{req.reason}</td>
-                              <td className="p-3">
+                              <td className="p-3 border border-slate-300 text-slate-600 max-w-xs truncate">{req.reason}</td>
+                              <td className="p-3 border border-slate-300">
                                 {req.attachment ? (
                                   <a href={req.attachment} target="_blank" rel="noreferrer" className="text-brand-600 font-bold underline">
                                     Lihat Surat
                                   </a>
                                 ) : '-'}
                               </td>
-                              <td className="p-3">
+                              <td className="p-3 border border-slate-300">
                                 {req.status === 'APPROVED' ? (
                                   <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-extrabold text-[10px]">
                                     ✓ Disetujui
@@ -526,7 +526,7 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={5} className="p-8 text-center text-slate-400 italic">
+                            <td colSpan={5} className="p-8 text-center text-slate-400 italic border border-slate-300">
                               Belum ada riwayat permohonan izin yang diproses.
                             </td>
                           </tr>
@@ -560,30 +560,30 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border border-slate-100 rounded-2xl">
+                  <table className="w-full text-left text-xs border-collapse border border-slate-300">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
-                        <th className="p-3.5">NAMA GURU</th>
-                        <th className="p-3.5">NIP</th>
-                        <th className="p-3.5">JAM MASUK</th>
-                        <th className="p-3.5">JAM PULANG</th>
-                        <th className="p-3.5">STATUS</th>
-                        <th className="p-3.5 text-center">FOTO SELFIE</th>
+                      <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase tracking-wider text-[11px]">
+                        <th className="p-3 border border-slate-300">NAMA GURU</th>
+                        <th className="p-3 border border-slate-300">NIP</th>
+                        <th className="p-3 border border-slate-300">JAM MASUK</th>
+                        <th className="p-3 border border-slate-300">JAM PULANG</th>
+                        <th className="p-3 border border-slate-300">STATUS</th>
+                        <th className="p-3 border border-slate-300 text-center">FOTO SELFIE</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody>
                       {todayAttendances.length > 0 ? (
                         todayAttendances.map((rec) => (
                           <tr key={rec.id} className="hover:bg-slate-50/50 transition">
-                            <td className="p-3.5 font-bold text-slate-900">{rec.user?.fullName}</td>
-                            <td className="p-3.5 font-mono text-slate-600">{rec.user?.nip}</td>
-                            <td className="p-3.5 font-bold text-emerald-600">
+                            <td className="p-3 border border-slate-300 font-bold text-slate-900">{rec.user?.fullName}</td>
+                            <td className="p-3 border border-slate-300 font-mono text-slate-600">{rec.user?.nip}</td>
+                            <td className="p-3 border border-slate-300 font-bold text-emerald-600">
                               {rec.checkInTime ? new Date(rec.checkInTime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-'}
                             </td>
-                            <td className="p-3.5 font-bold text-slate-700">
+                            <td className="p-3 border border-slate-300 font-bold text-slate-700">
                               {rec.checkOutTime ? new Date(rec.checkOutTime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-'}
                             </td>
-                            <td className="p-3.5">
+                            <td className="p-3 border border-slate-300">
                               {rec.status === 'PRESENT' ? (
                                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px]">
                                   Tepat Waktu
@@ -594,7 +594,7 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
                                 </span>
                               )}
                             </td>
-                            <td className="p-3 text-center">
+                            <td className="p-3 border border-slate-300 text-center">
                               {rec.selfieUrl || rec.selfiePhotoUrl ? (
                                 <div className="flex items-center justify-center gap-2">
                                   <img
@@ -620,7 +620,7 @@ export default function PrincipalDashboardPage({ activeTab = 'dashboard', setAct
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={6} className="p-8 text-center text-slate-400">
+                          <td colSpan={6} className="p-8 text-center text-slate-400 text-xs italic border border-slate-300">
                             Belum ada guru yang melakukan presensi masuk hari ini.
                           </td>
                         </tr>

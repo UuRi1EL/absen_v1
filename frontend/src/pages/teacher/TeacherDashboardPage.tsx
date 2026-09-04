@@ -773,20 +773,20 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
+                  <table className="w-full text-left text-xs border-collapse border border-slate-300">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-y border-slate-100">
-                        <th className="p-3.5 rounded-l-xl">TANGGAL</th>
-                        <th className="p-3.5">MASUK</th>
-                        <th className="p-3.5">PULANG</th>
-                        <th className="p-3.5 rounded-r-xl">STATUS</th>
+                      <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase tracking-wider text-[11px]">
+                        <th className="p-3 border border-slate-300">TANGGAL</th>
+                        <th className="p-3 border border-slate-300">MASUK</th>
+                        <th className="p-3 border border-slate-300">PULANG</th>
+                        <th className="p-3 border border-slate-300">STATUS</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody>
                       {history.length > 0 ? (
                         history.slice(0, 5).map((record) => (
-                          <tr key={record.id} className="hover:bg-slate-50/50 transition font-medium">
-                            <td className="p-3.5 text-slate-900 font-bold">
+                          <tr key={record.id} className="hover:bg-slate-50/70 transition font-medium">
+                            <td className="p-3 border border-slate-300 text-slate-900 font-bold">
                               {new Date(record.checkInTime || record.createdAt || record.date).toLocaleDateString('id-ID', {
                                 weekday: 'short',
                                 day: 'numeric',
@@ -794,7 +794,7 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                                 year: 'numeric'
                               })}
                             </td>
-                            <td className="p-3.5 text-slate-700">
+                            <td className="p-3 border border-slate-300 text-slate-700">
                               {record.checkInTime
                                 ? new Date(record.checkInTime).toLocaleTimeString('id-ID', {
                                     hour: '2-digit',
@@ -802,7 +802,7 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                                   })
                                 : '-'}
                             </td>
-                            <td className="p-3.5 text-slate-700">
+                            <td className="p-3 border border-slate-300 text-slate-700">
                               {record.checkOutTime
                                 ? new Date(record.checkOutTime).toLocaleTimeString('id-ID', {
                                     hour: '2-digit',
@@ -810,7 +810,7 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                                   })
                                 : '-'}
                             </td>
-                            <td className="p-3.5">
+                            <td className="p-3 border border-slate-300">
                               {record.status === 'PRESENT' ? (
                                 <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-extrabold text-[10px]">
                                   Tepat Waktu
@@ -825,7 +825,7 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={4} className="p-6 text-center text-slate-400">
+                          <td colSpan={4} className="p-6 text-center text-slate-400 border border-slate-300">
                             Belum ada riwayat presensi yang dicatat.
                           </td>
                         </tr>
@@ -968,27 +968,27 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
+                  <table className="w-full text-left text-xs border-collapse border border-slate-300">
                     <thead>
-                      <tr className="border-b border-slate-200 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
-                        <th className="py-3 px-3">Periode Tanggal</th>
-                        <th className="py-3 px-3">Alasan Izin</th>
-                        <th className="py-3 px-3">Dokumen Lampiran</th>
-                        <th className="py-3 px-3">Status Persetujuan</th>
-                        <th className="py-3 px-3">Ditinjau Oleh</th>
+                      <tr className="bg-slate-100 text-slate-700 text-[11px] font-extrabold uppercase tracking-wider">
+                        <th className="p-3 border border-slate-300">Periode Tanggal</th>
+                        <th className="p-3 border border-slate-300">Alasan Izin</th>
+                        <th className="p-3 border border-slate-300">Dokumen Lampiran</th>
+                        <th className="p-3 border border-slate-300">Status Persetujuan</th>
+                        <th className="p-3 border border-slate-300">Ditinjau Oleh</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 text-xs">
+                    <tbody className="text-xs">
                       {myLeaveRequests.length > 0 ? (
                         myLeaveRequests.map((req) => (
                           <tr key={req.id} className="hover:bg-slate-50/80 transition">
-                            <td className="py-3.5 px-3 font-semibold text-slate-900">
+                            <td className="p-3 border border-slate-300 font-semibold text-slate-900">
                               {new Date(req.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} - {new Date(req.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                             </td>
-                            <td className="py-3.5 px-3 text-slate-700 max-w-xs truncate font-medium">
+                            <td className="p-3 border border-slate-300 text-slate-700 max-w-xs truncate font-medium">
                               {req.reason}
                             </td>
-                            <td className="py-3.5 px-3">
+                            <td className="p-3 border border-slate-300">
                               {req.attachment ? (
                                 <a
                                   href={req.attachment}
@@ -1002,7 +1002,7 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                                 <span className="text-slate-400 italic">Tanpa Lampiran</span>
                               )}
                             </td>
-                            <td className="py-3.5 px-3">
+                            <td className="p-3 border border-slate-300">
                               {req.status === 'APPROVED' && (
                                 <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
                                   ✓ DISETUJUI (APPROVED)
@@ -1019,14 +1019,14 @@ export default function TeacherDashboardPage({ activeTab = 'dashboard', setActiv
                                 </span>
                               )}
                             </td>
-                            <td className="py-3.5 px-3 text-slate-600 font-medium">
+                            <td className="p-3 border border-slate-300 text-slate-600 font-medium">
                               {req.approvedBy?.fullName || '-'}
                             </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={5} className="py-8 text-center text-slate-400 text-xs italic">
+                          <td colSpan={5} className="py-8 text-center text-slate-400 text-xs italic border border-slate-300">
                             Belum ada riwayat permohonan izin yang diajukan.
                           </td>
                         </tr>
