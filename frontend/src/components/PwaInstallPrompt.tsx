@@ -96,7 +96,7 @@ export default function PwaInstallPrompt() {
                 <div>
                   <h4 className="text-xs font-black text-white flex items-center gap-1.5">
                     <Smartphone className="w-3.5 h-3.5 text-brand-400" />
-                    Install Aplikasi Presensi SD 2
+                    Install Aplikasi ABSEN PJJ2
                   </h4>
                   <p className="text-[10px] text-slate-300 font-medium leading-snug mt-0.5">
                     Pasang di layar HP Anda untuk akses presensi kilat 1-klik tanpa lewat browser.

@@ -11,7 +11,7 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'images/*.jpg', 'images/*.png'],
       manifest: {
         name: 'Sistem Presensi Guru • UPT SPF SD INPRES PAJJAIANG 2',
-        short_name: 'Presensi SD 2',
+        short_name: 'ABSEN PJJ2',
         description: 'Sistem Informasi Presensi Guru & Kepala Sekolah UPT SPF SD INPRES PAJJAIANG 2 Makassar Berbasis GPS Geofencing, Live Selfie, dan QR Code.',
         theme_color: '#d92509',
         background_color: '#f8fafc',
