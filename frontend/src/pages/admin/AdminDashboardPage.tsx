@@ -1012,22 +1012,25 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
 
       {/* DETAIL & ACTION EYE MODAL */}
       {showEyeModal && selectedUser && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-5 relative animate-modal-pop">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-lg shadow-2xl relative animate-modal-pop max-h-[90dvh] flex flex-col my-auto overflow-hidden">
+            {/* Sticky Header */}
+            <div className="flex justify-between items-center border-b border-slate-100 p-5 shrink-0 bg-white rounded-t-3xl">
+              <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
                 <User className="w-5 h-5 text-brand-500" /> Detail & Kelola Akun
               </h3>
               <button
                 onClick={() => setShowEyeModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Profile Overview Card */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 text-xs">
+            {/* Scrollable Content Body */}
+            <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1 overscroll-contain">
+              {/* Profile Overview Card */}
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 text-xs">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 shadow-md border-2 border-brand-500 bg-brand-500 text-white font-bold text-lg flex items-center justify-center">
                   {selectedUser.avatarUrl ? (
@@ -1242,6 +1245,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                   {isResettingPassword ? 'Proses...' : '🔑 Reset Password'}
                 </button>
               </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1414,21 +1418,22 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
 
       {/* ADD TEACHER MODAL */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4 relative">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md shadow-2xl relative max-h-[90dvh] flex flex-col my-auto overflow-hidden">
+            <div className="flex justify-between items-center border-b border-slate-100 p-5 shrink-0 bg-white rounded-t-3xl">
+              <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
                 <Users className="w-5 h-5 text-brand-500" /> Tambah Akun Guru Pengajar Baru
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-3 bg-brand-50 border border-brand-200 rounded-2xl text-brand-800 text-xs font-bold flex items-center gap-2">
+            <div className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1 overscroll-contain">
+              <div className="p-3 bg-brand-50 border border-brand-200 rounded-2xl text-brand-800 text-xs font-bold flex items-center gap-2">
               <Lock className="w-4 h-4 text-brand-600 shrink-0" />
               <span>Sistem UPT SPF SD INPRES PAJJAIANG 2 dikunci tepat 1 Kepala Sekolah & 1 Operator. Akun baru otomatis terdaftar sebagai Guru Pengajar.</span>
             </div>
@@ -1523,7 +1528,8 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
             </form>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
       {/* SELFIE PHOTO PREVIEW POPUP MODAL */}
       {selectedSelfieModal.show && (
