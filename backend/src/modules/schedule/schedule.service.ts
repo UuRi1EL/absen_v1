@@ -15,18 +15,6 @@ export class ScheduleService {
     batchMonth?: number,
     batchWeek?: number
   ) {
-    const results = [];
-    const defaultYear = batchYear || new Date().getFullYear();
-    const defaultMonth = batchMonth || new Date().getMonth() + 1;
-    const defaultWeek = batchWeek || 1;
-
-    for (const item of schedules) {
-      const y = item.year || defaultYear;
-      const m = item.month || defaultMonth;
-      const w = item.week || defaultWeek;
-      const res = await ScheduleRepository.upsertShiftSchedule(item.userId, y, m, w, item.dayOfWeek, item.shift);
-      results.push(res);
-    }
-    return results;
+    return ScheduleRepository.saveBatchSchedules(schedules, batchYear, batchMonth, batchWeek);
   }
 }

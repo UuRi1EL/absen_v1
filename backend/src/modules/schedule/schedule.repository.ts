@@ -178,6 +178,127 @@ export class ScheduleRepository {
     }
   }
 
+  static async saveBatchSchedules(
+    schedules: Array<{ userId: string; year?: number; month?: number; week?: number; dayOfWeek: number; shift: 'SHIFT_1' | 'SHIFT_2' }>,
+    batchYear?: number,
+    batchMonth?: number,
+    batchWeek?: number
+  ) {
+    await this.ensureTable();
+
+    if (!Array.isArray(schedules) || schedules.length === 0) {
+      return { success: true, count: 0 };
+    }
+
+    const defaultYear = batchYear || new Date().getFullYear();
+    const defaultMonth = batchMonth || new Date().getMonth() + 1;
+    const defaultWeek = batchWeek || 1;
+
+    // Filter valid items
+    const validItems = schedules.filter(
+      (s) => s && s.userId && s.userId !== 'my' && s.userId !== 'me' && s.dayOfWeek && s.shift
+    );
+
+    if (validItems.length === 0) {
+      return { success: true, count: 0 };
+    }
+
+    // Prepare rows to upsert across weeks 1..5 for the selected month
+    const weeksToSave = [1, 2, 3, 4, 5];
+    const rowsToUpsert: Array<{
+      id: string;
+      userId: string;
+      year: number;
+      month: number;
+      week: number;
+      dayOfWeek: number;
+      shift: 'SHIFT_1' | 'SHIFT_2';
+    }> = [];
+
+    for (const item of validItems) {
+      const y = item.year || defaultYear;
+      const m = item.month || defaultMonth;
+
+      for (const w of weeksToSave) {
+        rowsToUpsert.push({
+          id: `tss_${item.userId}_${y}_${m}_${w}_${item.dayOfWeek}`,
+          userId: item.userId,
+          year: y,
+          month: m,
+          week: w,
+          dayOfWeek: Number(item.dayOfWeek),
+          shift: item.shift
+        });
+      }
+    }
+
+    // Execute in fast chunks of 200 rows using single parameterized SQL bulk upsert with enum cast
+    const chunkSize = 200;
+    for (let i = 0; i < rowsToUpsert.length; i += chunkSize) {
+      const chunk = rowsToUpsert.slice(i, i + chunkSize);
+      const valuePlaceholders: string[] = [];
+      const params: any[] = [];
+
+      chunk.forEach((row, idx) => {
+        const offset = idx * 7;
+        valuePlaceholders.push(
+          `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${offset + 5}, $${offset + 6}, $${offset + 7}::"WorkShift", NOW(), NOW())`
+        );
+        params.push(row.id, row.userId, row.year, row.month, row.week, row.dayOfWeek, row.shift);
+      });
+
+      const query = `
+        INSERT INTO "teacher_shift_schedules" ("id", "userId", "year", "month", "week", "dayOfWeek", "shift", "createdAt", "updatedAt")
+        VALUES ${valuePlaceholders.join(',\n')}
+        ON CONFLICT ("userId", "year", "month", "week", "dayOfWeek")
+        DO UPDATE SET 
+          "shift" = EXCLUDED."shift",
+          "updatedAt" = NOW()
+      `;
+
+      await prisma.$executeRawUnsafe(query, ...params);
+    }
+
+    // Synchronize default profile work shifts
+    try {
+      const userShiftMap = new Map<string, 'SHIFT_1' | 'SHIFT_2'>();
+      for (const item of validItems) {
+        if (!userShiftMap.has(item.userId)) {
+          userShiftMap.set(item.userId, item.shift);
+        }
+      }
+
+      const shift1Users: string[] = [];
+      const shift2Users: string[] = [];
+
+      userShiftMap.forEach((shift, uId) => {
+        if (shift === 'SHIFT_2') {
+          shift2Users.push(uId);
+        } else {
+          shift1Users.push(uId);
+        }
+      });
+
+      if (shift1Users.length > 0) {
+        await prisma.teacherProfile.updateMany({
+          where: { userId: { in: shift1Users } },
+          data: { workShiftStart: '07:30', workShiftEnd: '15:00', defaultShift: 'SHIFT_1' }
+        });
+      }
+
+      if (shift2Users.length > 0) {
+        await prisma.teacherProfile.updateMany({
+          where: { userId: { in: shift2Users } },
+          data: { workShiftStart: '10:00', workShiftEnd: '17:00', defaultShift: 'SHIFT_2' }
+        });
+      }
+    } catch (profErr) {
+      console.warn('Notice updating teacher profile work shift defaults:', profErr);
+    }
+
+    return { success: true, count: rowsToUpsert.length };
+  }
+
   static async upsertShiftSchedule(
     userId: string,
     year: number,
@@ -192,20 +313,12 @@ export class ScheduleRepository {
     try {
       const weeksToSave = [1, 2, 3, 4, 5];
       for (const w of weeksToSave) {
-        await prisma.$executeRawUnsafe(
-          `DELETE FROM "teacher_shift_schedules" 
-           WHERE "userId" = $1 AND "year" = $2 AND "month" = $3 AND "week" = $4 AND "dayOfWeek" = $5`,
-          userId,
-          year,
-          month,
-          w,
-          dayOfWeek
-        );
-
         const id = `tss_${userId}_${year}_${month}_${w}_${dayOfWeek}`;
         await prisma.$executeRawUnsafe(
           `INSERT INTO "teacher_shift_schedules" ("id", "userId", "year", "month", "week", "dayOfWeek", "shift", "createdAt", "updatedAt")
-           VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())`,
+           VALUES ($1, $2, $3, $4, $5, $6, $7::"WorkShift", NOW(), NOW())
+           ON CONFLICT ("userId", "year", "month", "week", "dayOfWeek")
+           DO UPDATE SET "shift" = EXCLUDED."shift", "updatedAt" = NOW()`,
           id,
           userId,
           year,
@@ -218,12 +331,10 @@ export class ScheduleRepository {
 
       const start = shift === 'SHIFT_1' ? '07:30' : '10:00';
       const end = shift === 'SHIFT_1' ? '15:00' : '17:00';
-      await prisma.$executeRawUnsafe(
-        `UPDATE "teacher_profiles" SET "workShiftStart" = $1, "workShiftEnd" = $2 WHERE "userId" = $3`,
-        start,
-        end,
-        userId
-      );
+      await prisma.teacherProfile.updateMany({
+        where: { userId },
+        data: { workShiftStart: start, workShiftEnd: end, defaultShift: shift }
+      });
 
       return true;
     } catch (rawErr) {
