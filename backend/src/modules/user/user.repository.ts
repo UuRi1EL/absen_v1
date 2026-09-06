@@ -46,6 +46,7 @@ export class UserRepository {
     position: string;
     department: string;
     schoolId: string;
+    employmentStatus?: string;
   }): Promise<User> {
     return prisma.user.create({
       data: {
@@ -59,7 +60,8 @@ export class UserRepository {
           create: {
             schoolId: data.schoolId,
             position: data.position,
-            department: data.department
+            department: data.department,
+            employmentStatus: data.employmentStatus || 'Guru Honorer Sekolah'
           }
         }
       },

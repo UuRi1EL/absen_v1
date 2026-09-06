@@ -48,7 +48,8 @@ export class UserService {
       role: dto.role || 'TEACHER',
       position: dto.position,
       department: dto.department,
-      schoolId: school.id
+      schoolId: school.id,
+      employmentStatus: dto.employmentStatus || 'Guru Honorer Sekolah'
     });
   }
 

@@ -36,7 +36,8 @@ import {
   FileText,
   Paperclip,
   Trash2,
-  ExternalLink
+  ExternalLink,
+  ShieldCheck
 } from 'lucide-react';
 
 interface DashboardPageProps {
@@ -74,6 +75,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
   const [password, setPassword] = useState('password123');
   const [phone, setPhone] = useState('');
   const [position, setPosition] = useState('Guru Kelas');
+  const [employmentStatus, setEmploymentStatus] = useState('Tenaga Honorer Sekolah');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -203,6 +205,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
     setPassword('password123');
     setPhone('');
     setPosition('Guru Kelas');
+    setEmploymentStatus('Tenaga Honorer Sekolah');
     setShowAddModal(true);
   };
 
@@ -233,11 +236,12 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
         password,
         phone,
         position,
-        department: 'Tenaga Pendidik',
+        department: ['Keamanan', 'Pustakawan'].includes(position) ? 'Tenaga Kependidikan' : 'Tenaga Pendidik',
+        employmentStatus,
         role: 'TEACHER'
       });
 
-      setSuccessMsg(`Akun guru ${fullName} berhasil ditambahkan!`);
+      setSuccessMsg(`Akun pegawai/guru ${fullName} berhasil ditambahkan!`);
       setTimeout(() => {
         setShowAddModal(false);
         fetchAdminData();
@@ -818,12 +822,16 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                                 <span className="px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold text-[10px] inline-flex items-center gap-1 border border-emerald-300">
                                   <Award className="w-3 h-3 text-emerald-600" /> Kepala Sekolah (1-of-1)
                                 </span>
+                              ) : t.teacherProfile?.employmentStatus === 'Tenaga Honorer Sekolah' || ['Keamanan', 'Pustakawan'].includes(t.teacherProfile?.position || '') ? (
+                                <span className="px-2 py-0.5 rounded-lg bg-cyan-100 text-cyan-800 font-extrabold text-[10px] border border-cyan-200 inline-flex items-center gap-1">
+                                  <ShieldCheck className="w-3 h-3 text-cyan-700" /> Tendik Honorer
+                                </span>
                               ) : (
                                 <span className="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-semibold text-[10px]">
                                   Guru Pengajar
                                 </span>
                               )}{' '}
-                              <span className="text-[11px]">{t.teacherProfile?.position || ''}</span>
+                              <span className="text-[11px] font-bold text-slate-800">{t.teacherProfile?.position ? `• ${t.teacherProfile.position}` : ''}</span>
                             </td>
                             <td className="p-3 border border-slate-300 text-slate-500">{t.email}</td>
                             <td className="p-3 border border-slate-300">
@@ -1051,7 +1059,9 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
 
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/60 text-[11px]">
                 <div><span className="text-slate-400 font-medium">Role:</span> <strong className="text-slate-800">{selectedUser.role}</strong></div>
-                <div><span className="text-slate-400 font-medium">Status:</span> <strong className={selectedUser.isActive ? 'text-emerald-600' : 'text-rose-600'}>{selectedUser.isActive ? 'Aktif' : 'Nonaktif'}</strong></div>
+                <div><span className="text-slate-400 font-medium">Status Akun:</span> <strong className={selectedUser.isActive ? 'text-emerald-600' : 'text-rose-600'}>{selectedUser.isActive ? 'Aktif' : 'Nonaktif'}</strong></div>
+                <div><span className="text-slate-400 font-medium">Jabatan:</span> <strong className="text-slate-800">{selectedUser.teacherProfile?.position || '-'}</strong></div>
+                <div><span className="text-slate-400 font-medium">Kepegawaian:</span> <strong className="text-slate-800">{selectedUser.teacherProfile?.employmentStatus || '-'}</strong></div>
                 <div><span className="text-slate-400 font-medium">Email:</span> <span className="text-slate-700 truncate">{selectedUser.email}</span></div>
                 <div><span className="text-slate-400 font-medium">Telepon:</span> <span className="text-slate-700">{selectedUser.phone || '-'}</span></div>
               </div>
@@ -1079,7 +1089,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                       onChange={(e) => setEditRole(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold"
                     >
-                      <option value="TEACHER">Guru Pengajar</option>
+                      <option value="TEACHER">Guru / Tenaga Honorer (Presensi)</option>
                       <option value="PRINCIPAL">Kepala Sekolah</option>
                       <option value="ADMIN">Admin / Operator</option>
                     </select>
@@ -1120,14 +1130,62 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="font-bold text-slate-700">Jabatan / Tugas</label>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="font-bold text-slate-700">Jabatan / Tugas</label>
+                    <span className="text-[10px] text-slate-400 font-medium">Klik pilih cepat atau ketik</span>
+                  </div>
                   <input
                     type="text"
                     value={editPosition}
                     onChange={(e) => setEditPosition(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
+                    placeholder="Contoh: Keamanan / Pustakawan / Guru Kelas"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-semibold"
                   />
+                  {/* Quick Chips for Position & Auto-Status */}
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditPosition('Keamanan');
+                        setEditEmploymentStatus('Tenaga Honorer Sekolah');
+                      }}
+                      className="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[10px] font-extrabold transition flex items-center gap-1 active:scale-95"
+                    >
+                      🛡️ Keamanan
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditPosition('Pustakawan');
+                        setEditEmploymentStatus('Tenaga Honorer Sekolah');
+                      }}
+                      className="px-2 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 text-[10px] font-extrabold transition flex items-center gap-1 active:scale-95"
+                    >
+                      📚 Pustakawan
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditPosition('Guru Kelas')}
+                      className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
+                    >
+                      📖 Guru Kelas
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditPosition('Guru PJOK')}
+                      className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
+                    >
+                      ⚽ Guru PJOK
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditPosition('Guru PAI')}
+                      className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
+                    >
+                      🕌 Guru PAI
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-1">
@@ -1140,6 +1198,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                     <option value="Status Aktif (PPPK)">Status Aktif (PPPK)</option>
                     <option value="Status Aktif (PNS)">Status Aktif (PNS)</option>
                     <option value="Guru Honorer Sekolah">Guru Honorer Sekolah</option>
+                    <option value="Tenaga Honorer Sekolah">Tenaga Honorer Sekolah (Keamanan / Pustakawan)</option>
                     <option value="GTY / GTT Resmi">GTY / GTT Resmi</option>
                   </select>
                 </div>
@@ -1422,7 +1481,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
           <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md shadow-2xl relative max-h-[90dvh] flex flex-col my-auto overflow-hidden">
             <div className="flex justify-between items-center border-b border-slate-100 p-5 shrink-0 bg-white rounded-t-3xl">
               <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                <Users className="w-5 h-5 text-brand-500" /> Tambah Akun Guru Pengajar Baru
+                <Users className="w-5 h-5 text-brand-500" /> Tambah Akun Guru & Tendik Honorer Baru
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -1435,7 +1494,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
             <div className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1 overscroll-contain">
               <div className="p-3 bg-brand-50 border border-brand-200 rounded-2xl text-brand-800 text-xs font-bold flex items-center gap-2">
               <Lock className="w-4 h-4 text-brand-600 shrink-0" />
-              <span>Sistem UPT SPF SD INPRES PAJJAIANG 2 dikunci tepat 1 Kepala Sekolah & 1 Operator. Akun baru otomatis terdaftar sebagai Guru Pengajar.</span>
+              <span>Sistem UPT SPF SD INPRES PAJJAIANG 2 dikunci tepat 1 Kepala Sekolah & 1 Operator. Akun baru otomatis terdaftar sebagai Pegawai Presensi (Guru atau Tenaga Honorer Sekolah).</span>
             </div>
 
             {errorMsg && (
@@ -1452,13 +1511,13 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
 
             <form onSubmit={handleCreateTeacher} className="space-y-3 text-xs">
               <div className="space-y-1">
-                <label className="font-bold text-slate-700">NIP Guru</label>
+                <label className="font-bold text-slate-700">NIP / ID Pengguna</label>
                 <input
                   type="text"
                   required
                   value={nip}
                   onChange={(e) => setNip(e.target.value)}
-                  placeholder="Contoh: 199508122024212005 (18 Digit NIP)"
+                  placeholder="Contoh: 199508122024212005 atau ID Honorer"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
                 />
               </div>
@@ -1470,24 +1529,24 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Contoh: Ani Suryani, S.Pd."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Email Sekolah</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Contoh: ani@sdinprespajjaiang2.sch.id"
+                  placeholder="Contoh: Ani Suryani, S.Pd. atau Nama Petugas"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700">Email Sekolah</label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Contoh: staf@sdinprespajjaiang2.sch.id"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
+                  />
+                </div>
+
                 <div className="space-y-1">
                   <label className="font-bold text-slate-700">Password</label>
                   <input
@@ -1498,18 +1557,80 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
                   />
                 </div>
+              </div>
 
-                <div className="space-y-1">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
                   <label className="font-bold text-slate-700">Jabatan / Tugas</label>
-                  <input
-                    type="text"
-                    required
-                    value={position}
-                    onChange={(e) => setPosition(e.target.value)}
-                    placeholder="Wali Kelas 5B / Guru PJOK"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
-                  />
+                  <span className="text-[10px] text-slate-400 font-medium">Klik pilihan cepat:</span>
                 </div>
+                <input
+                  type="text"
+                  required
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value)}
+                  placeholder="Contoh: Keamanan / Pustakawan / Guru Kelas"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-semibold"
+                />
+                {/* Quick Chips for Position */}
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('Keamanan');
+                      setEmploymentStatus('Tenaga Honorer Sekolah');
+                    }}
+                    className="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[10px] font-extrabold transition flex items-center gap-1 active:scale-95"
+                  >
+                    🛡️ Keamanan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('Pustakawan');
+                      setEmploymentStatus('Tenaga Honorer Sekolah');
+                    }}
+                    className="px-2 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 text-[10px] font-extrabold transition flex items-center gap-1 active:scale-95"
+                  >
+                    📚 Pustakawan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPosition('Guru Kelas')}
+                    className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
+                  >
+                    📖 Guru Kelas
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPosition('Guru PJOK')}
+                    className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
+                  >
+                    ⚽ Guru PJOK
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPosition('Guru PAI')}
+                    className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
+                  >
+                    🕌 Guru PAI
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">Status Kepegawaian</label>
+                <select
+                  value={employmentStatus}
+                  onChange={(e) => setEmploymentStatus(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold"
+                >
+                  <option value="Tenaga Honorer Sekolah">Tenaga Honorer Sekolah (Keamanan / Pustakawan)</option>
+                  <option value="Guru Honorer Sekolah">Guru Honorer Sekolah</option>
+                  <option value="Status Aktif (PPPK)">Status Aktif (PPPK)</option>
+                  <option value="Status Aktif (PNS)">Status Aktif (PNS)</option>
+                  <option value="GTY / GTT Resmi">GTY / GTT Resmi</option>
+                </select>
               </div>
 
               <button
@@ -1521,7 +1642,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    <CheckCircle2 className="w-4 h-4" /> Simpan Akun Guru Pengajar
+                    <CheckCircle2 className="w-4 h-4" /> Simpan Akun Pegawai
                   </>
                 )}
               </button>

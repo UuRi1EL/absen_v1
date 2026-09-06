@@ -9,7 +9,8 @@ export const createUserSchema = z.object({
   phone: z.string().optional(),
   role: z.nativeEnum(Role).default(Role.TEACHER),
   position: z.string().default('Guru Kelas'),
-  department: z.string().default('Tenaga Pendidik')
+  department: z.string().default('Tenaga Pendidik'),
+  employmentStatus: z.string().default('Guru Honorer Sekolah')
 });
 
 export const updateUserSchema = z.object({
@@ -17,8 +18,10 @@ export const updateUserSchema = z.object({
   fullName: z.string().min(3).optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),
+  role: z.string().optional(),
   position: z.string().optional(),
-  department: z.string().optional()
+  department: z.string().optional(),
+  employmentStatus: z.string().optional()
 });
 
 export type CreateUserDto = z.infer<typeof createUserSchema>;
