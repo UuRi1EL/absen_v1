@@ -236,7 +236,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
         password,
         phone,
         position,
-        department: ['Keamanan', 'Pustakawan'].includes(position) ? 'Tenaga Kependidikan' : 'Tenaga Pendidik',
+        department: employmentStatus === 'Tenaga Honorer Sekolah' ? 'Tenaga Kependidikan' : 'Tenaga Pendidik',
         employmentStatus,
         role: 'TEACHER'
       });
@@ -822,9 +822,9 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                                 <span className="px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold text-[10px] inline-flex items-center gap-1 border border-emerald-300">
                                   <Award className="w-3 h-3 text-emerald-600" /> Kepala Sekolah (1-of-1)
                                 </span>
-                              ) : t.teacherProfile?.employmentStatus === 'Tenaga Honorer Sekolah' || ['Keamanan', 'Pustakawan'].includes(t.teacherProfile?.position || '') ? (
+                              ) : t.teacherProfile?.employmentStatus === 'Tenaga Honorer Sekolah' ? (
                                 <span className="px-2 py-0.5 rounded-lg bg-cyan-100 text-cyan-800 font-extrabold text-[10px] border border-cyan-200 inline-flex items-center gap-1">
-                                  <ShieldCheck className="w-3 h-3 text-cyan-700" /> Tendik Honorer
+                                  <ShieldCheck className="w-3 h-3 text-cyan-700" /> Tenaga Honorer Sekolah
                                 </span>
                               ) : (
                                 <span className="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-semibold text-[10px]">
@@ -1130,62 +1130,15 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label className="font-bold text-slate-700">Jabatan / Tugas</label>
-                    <span className="text-[10px] text-slate-400 font-medium">Klik pilih cepat atau ketik</span>
-                  </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700">Jabatan / Tugas</label>
                   <input
                     type="text"
                     value={editPosition}
                     onChange={(e) => setEditPosition(e.target.value)}
-                    placeholder="Contoh: Keamanan / Pustakawan / Guru Kelas"
+                    placeholder="Contoh: Guru Kelas / Staf Honorer / Penjaga"
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-semibold"
                   />
-                  {/* Quick Chips for Position & Auto-Status */}
-                  <div className="flex flex-wrap gap-1.5 pt-0.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditPosition('Keamanan');
-                        setEditEmploymentStatus('Tenaga Honorer Sekolah');
-                      }}
-                      className="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[10px] font-extrabold transition flex items-center gap-1 active:scale-95"
-                    >
-                      🛡️ Keamanan
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditPosition('Pustakawan');
-                        setEditEmploymentStatus('Tenaga Honorer Sekolah');
-                      }}
-                      className="px-2 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 text-[10px] font-extrabold transition flex items-center gap-1 active:scale-95"
-                    >
-                      📚 Pustakawan
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditPosition('Guru Kelas')}
-                      className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
-                    >
-                      📖 Guru Kelas
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditPosition('Guru PJOK')}
-                      className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
-                    >
-                      ⚽ Guru PJOK
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditPosition('Guru PAI')}
-                      className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
-                    >
-                      🕌 Guru PAI
-                    </button>
-                  </div>
                 </div>
 
                 <div className="space-y-1">
@@ -1198,7 +1151,7 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
                     <option value="Status Aktif (PPPK)">Status Aktif (PPPK)</option>
                     <option value="Status Aktif (PNS)">Status Aktif (PNS)</option>
                     <option value="Guru Honorer Sekolah">Guru Honorer Sekolah</option>
-                    <option value="Tenaga Honorer Sekolah">Tenaga Honorer Sekolah (Keamanan / Pustakawan)</option>
+                    <option value="Tenaga Honorer Sekolah">Tenaga Honorer Sekolah</option>
                     <option value="GTY / GTT Resmi">GTY / GTT Resmi</option>
                   </select>
                 </div>
@@ -1478,11 +1431,14 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
       {/* ADD TEACHER MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md shadow-2xl relative max-h-[90dvh] flex flex-col my-auto overflow-hidden">
-            <div className="flex justify-between items-center border-b border-slate-100 p-5 shrink-0 bg-white rounded-t-3xl">
-              <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                <Users className="w-5 h-5 text-brand-500" /> Tambah Akun Guru & Tendik Honorer Baru
-              </h3>
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-xl shadow-2xl relative max-h-[90dvh] flex flex-col my-auto overflow-hidden">
+            <div className="flex justify-between items-center border-b border-slate-100 p-5 sm:p-6 shrink-0 bg-white rounded-t-3xl">
+              <div>
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-brand-500" /> Tambah Akun Guru & Tendik Honorer Baru
+                </h3>
+                <p className="text-[11px] text-slate-400 font-medium mt-0.5">Daftarkan akun presensi pendidik atau tenaga kependidikan</p>
+              </div>
               <button
                 onClick={() => setShowAddModal(false)}
                 className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
@@ -1493,164 +1449,123 @@ export default function AdminDashboardPage({ activeTab = 'dashboard', setActiveT
 
             <div className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1 overscroll-contain">
               <div className="p-3 bg-brand-50 border border-brand-200 rounded-2xl text-brand-800 text-xs font-bold flex items-center gap-2">
-              <Lock className="w-4 h-4 text-brand-600 shrink-0" />
-              <span>Sistem UPT SPF SD INPRES PAJJAIANG 2 dikunci tepat 1 Kepala Sekolah & 1 Operator. Akun baru otomatis terdaftar sebagai Pegawai Presensi (Guru atau Tenaga Honorer Sekolah).</span>
-            </div>
-
-            {errorMsg && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" /> {errorMsg}
-              </div>
-            )}
-
-            {successMsg && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0" /> {successMsg}
-              </div>
-            )}
-
-            <form onSubmit={handleCreateTeacher} className="space-y-3 text-xs">
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">NIP / ID Pengguna</label>
-                <input
-                  type="text"
-                  required
-                  value={nip}
-                  onChange={(e) => setNip(e.target.value)}
-                  placeholder="Contoh: 199508122024212005 atau ID Honorer"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
-                />
+                <Lock className="w-4 h-4 text-brand-600 shrink-0" />
+                <span>Sistem UPT SPF SD INPRES PAJJAIANG 2 dikunci tepat 1 Kepala Sekolah & 1 Operator. Akun baru otomatis terdaftar sebagai Pegawai Presensi (Guru atau Tenaga Honorer Sekolah).</span>
               </div>
 
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Nama Lengkap & Gelar</label>
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Contoh: Ani Suryani, S.Pd. atau Nama Petugas"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
-                />
-              </div>
+              {errorMsg && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" /> {errorMsg}
+                </div>
+              )}
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="font-bold text-slate-700">Email Sekolah</label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Contoh: staf@sdinprespajjaiang2.sch.id"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
-                  />
+              {successMsg && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" /> {successMsg}
+                </div>
+              )}
+
+              <form onSubmit={handleCreateTeacher} className="space-y-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {/* Kolom 1: NIP / ID Pengguna */}
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">NIP / ID Pengguna</label>
+                    <input
+                      type="text"
+                      required
+                      value={nip}
+                      onChange={(e) => setNip(e.target.value)}
+                      placeholder="Contoh: 199508122024212005 / ID Honorer"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition outline-none"
+                    />
+                  </div>
+
+                  {/* Kolom 2: Nama Lengkap & Gelar */}
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Nama Lengkap & Gelar</label>
+                    <input
+                      type="text"
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Contoh: Ani Suryani, S.Pd."
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition outline-none font-semibold"
+                    />
+                  </div>
+
+                  {/* Kolom 3: Jabatan / Tugas */}
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Jabatan / Tugas</label>
+                    <input
+                      type="text"
+                      required
+                      value={position}
+                      onChange={(e) => setPosition(e.target.value)}
+                      placeholder="Contoh: Guru Kelas / Staf Honorer / Penjaga"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition outline-none font-semibold"
+                    />
+                  </div>
+
+                  {/* Kolom 4: Status Kepegawaian */}
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Status Kepegawaian</label>
+                    <select
+                      value={employmentStatus}
+                      onChange={(e) => setEmploymentStatus(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition outline-none font-bold"
+                    >
+                      <option value="Tenaga Honorer Sekolah">Tenaga Honorer Sekolah</option>
+                      <option value="Guru Honorer Sekolah">Guru Honorer Sekolah</option>
+                      <option value="Status Aktif (PPPK)">Status Aktif (PPPK)</option>
+                      <option value="Status Aktif (PNS)">Status Aktif (PNS)</option>
+                      <option value="GTY / GTT Resmi">GTY / GTT Resmi</option>
+                    </select>
+                  </div>
+
+                  {/* Kolom 5: Email Sekolah */}
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Email Sekolah</label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Contoh: staf@sdinprespajjaiang2.sch.id"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition outline-none"
+                    />
+                  </div>
+
+                  {/* Kolom 6: Password Awal */}
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-700">Password Awal</label>
+                    <input
+                      type="text"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition outline-none font-mono"
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="font-bold text-slate-700">Password</label>
-                  <input
-                    type="text"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="font-bold text-slate-700">Jabatan / Tugas</label>
-                  <span className="text-[10px] text-slate-400 font-medium">Klik pilihan cepat:</span>
-                </div>
-                <input
-                  type="text"
-                  required
-                  value={position}
-                  onChange={(e) => setPosition(e.target.value)}
-                  placeholder="Contoh: Keamanan / Pustakawan / Guru Kelas"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-semibold"
-                />
-                {/* Quick Chips for Position */}
-                <div className="flex flex-wrap gap-1.5 pt-0.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('Keamanan');
-                      setEmploymentStatus('Tenaga Honorer Sekolah');
-                    }}
-                    className="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[10px] font-extrabold transition flex items-center gap-1 active:scale-95"
-                  >
-                    🛡️ Keamanan
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('Pustakawan');
-                      setEmploymentStatus('Tenaga Honorer Sekolah');
-                    }}
-                    className="px-2 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 text-[10px] font-extrabold transition flex items-center gap-1 active:scale-95"
-                  >
-                    📚 Pustakawan
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPosition('Guru Kelas')}
-                    className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
-                  >
-                    📖 Guru Kelas
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPosition('Guru PJOK')}
-                    className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
-                  >
-                    ⚽ Guru PJOK
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPosition('Guru PAI')}
-                    className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
-                  >
-                    🕌 Guru PAI
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Status Kepegawaian</label>
-                <select
-                  value={employmentStatus}
-                  onChange={(e) => setEmploymentStatus(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-bold"
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full mt-2 py-3 rounded-2xl bg-brand-500 hover:bg-brand-600 disabled:opacity-40 text-white font-bold text-xs shadow-lg shadow-brand-500/25 transition flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                 >
-                  <option value="Tenaga Honorer Sekolah">Tenaga Honorer Sekolah (Keamanan / Pustakawan)</option>
-                  <option value="Guru Honorer Sekolah">Guru Honorer Sekolah</option>
-                  <option value="Status Aktif (PPPK)">Status Aktif (PPPK)</option>
-                  <option value="Status Aktif (PNS)">Status Aktif (PNS)</option>
-                  <option value="GTY / GTT Resmi">GTY / GTT Resmi</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full mt-2 py-3 rounded-2xl bg-brand-500 hover:bg-brand-600 disabled:opacity-40 text-white font-bold text-xs shadow-lg shadow-brand-500/25 transition flex items-center justify-center gap-2"
-              >
-                {isSubmitting ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4" /> Simpan Akun Pegawai
-                  </>
-                )}
-              </button>
-            </form>
+                  {isSubmitting ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" /> Simpan Akun Pegawai
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
 
       {/* SELFIE PHOTO PREVIEW POPUP MODAL */}
       {selectedSelfieModal.show && (
